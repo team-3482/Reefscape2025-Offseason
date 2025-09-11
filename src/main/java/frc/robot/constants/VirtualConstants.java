@@ -19,4 +19,11 @@ public final class VirtualConstants {
         /** Speed multiplier when using fine-control movement. */
         public static final double FINE_CONTROL_MULT = 0.15;
     }
+
+    /** Tab names in Elastic. */
+    public static final class DashboardTabNames {
+        public static final String TELEOP = "Teleoperated";
+        public static final String AUTON = "Autonomous";
+        public static final String DEV = "Dev";
+    }
 }

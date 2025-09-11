@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.VirtualConstants;
+import frc.robot.utilities.Elastic;
 
 public class Robot extends TimedRobot {
     private Command auton;
@@ -48,6 +50,8 @@ public class Robot extends TimedRobot {
         else {
             System.err.println("No auton command found.");
         }
+
+        Elastic.selectTab(VirtualConstants.DashboardTabNames.AUTON);
     }
 
     @Override
@@ -58,6 +62,8 @@ public class Robot extends TimedRobot {
         if (auton != null) {
             this.auton.cancel();
         }
+
+        Elastic.selectTab(VirtualConstants.DashboardTabNames.TELEOP);
     }
 
     @Override
