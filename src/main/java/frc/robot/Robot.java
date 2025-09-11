@@ -4,22 +4,56 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.VirtualConstants;
 import frc.robot.utilities.Elastic;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-public class Robot extends TimedRobot {
+import java.io.File;
+
+public class Robot extends LoggedRobot {
     private Command auton;
 
     public Robot() {
         RobotContainer robotContainer = RobotContainer.getInstance();
+
         robotContainer.configureDriverBindings();
-        // robotContainer.configureOperatorBindings();
+        // robotContainer.configureOperatorBindings(); // TODO operator controller
+
+        WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+
+        // Logging
+        Logger.recordMetadata("ProjectName", "Reefscape2025-Offseason");
+
+        if (isReal()) {
+            // Random parent directory name to differentiate logs.
+            // I tried to use the date & time, but the RIO doesn't have accurate date & time.
+            String path = "/U/logs/" + (long)(Math.random() * Math.pow(10, 16)); 
+
+            System.out.println("logging to: " + path + " (new directory: " + new File(path).mkdirs() + ")");
+
+            // SignalLogger.setPath(path); // TODO uncomment after phoenix6 library is added
+
+            Logger.addDataReceiver(new WPILOGWriter(path)); // Log to a USB stick ("/U/logs")
+            Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+
+            Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+            // This will always be either 0 or 1, so the > sign is used to suppress the comparing identical expressions.
+            //noinspection ConstantValue (IntelliJ warning suppression)
+            Logger.recordMetadata("GitDirty", BuildConstants.DIRTY > 0 ? "true" : "false");
+            Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+
+            Logger.start();
+        }
 
         // Eager-load the auton command so it's ready right away
         RobotContainer.getInstance().getAutonomousCommand();
@@ -29,9 +63,11 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
         double voltage = RobotController.getBatteryVoltage();
+        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
         SmartDashboard.putNumber("Voltage", voltage);
+
+        Logger.recordOutput("Voltage", voltage);
     }
 
     @Override
@@ -43,6 +79,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         this.auton = RobotContainer.getInstance().getAutonomousCommand();
+
+        Logger.recordOutput("Auton/AutonCommand", auton.getName());
 
         if (this.auton != null) {
             this.auton.schedule();
