@@ -40,10 +40,10 @@ public enum StatusColors {
      * @param color - The Color.
      * @param brightness - How bright this color should be. If null, it will be 50%.
      * @param priority - The priority of this color over other colors (higher = higher priority).
-     * -1 will always be overriden and will always override.
+     * -1 will always be overridden and will always override.
      * @param stickyTime - How long this color should stay. -1 is infinitely long.
      */
-    private StatusColors(Color color, Dimensionless brightness, int priority, double stickyTime) {
+    StatusColors(Color color, Dimensionless brightness, int priority, double stickyTime) {
         this.color = color;
         this.brightness = brightness == null ? Percent.of(75) : brightness;
         this.priority = priority;
@@ -51,7 +51,7 @@ public enum StatusColors {
     }
 
     /**
-     * Get the StatuColors associated with this color.
+     * Get the StateColors associated with this color.
      * @param color - The color to fetch.
      * @return The StatusColors. If none, returns null.
      */

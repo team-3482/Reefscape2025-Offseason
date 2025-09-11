@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.VirtualConstants.ControllerConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.led.LEDSubsystem;
 
 public class RobotContainer {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
@@ -47,7 +48,7 @@ public class RobotContainer {
 
     /** Creates instances of each subsystem so periodic runs on startup. */
     private void initializeSubsystems() {
-        // ExampleSubsystem.getInstance();
+        LEDSubsystem.getInstance();
     }
 
     /** Configures the button bindings of the driver controller. */

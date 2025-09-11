@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.VirtualConstants;
+import frc.robot.led.LEDSubsystem;
+import frc.robot.led.StatusColors;
 import frc.robot.utilities.Elastic;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -59,6 +61,9 @@ public class Robot extends LoggedRobot {
         FollowPathCommand.warmupCommand().schedule();
         // Eager-load the auton command so it's ready right away
         RobotContainer.getInstance().getAutonomousCommand();
+
+        // Solid orange like the RSL when disabled
+        LEDSubsystem.getInstance().setColor(StatusColors.RSL);
     }
 
     @Override
@@ -73,10 +78,18 @@ public class Robot extends LoggedRobot {
     }
 
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        // Solid orange like the RSL when disabled
+        LEDSubsystem.getInstance().setColor(StatusColors.RSL);
+    }
 
     @Override
     public void disabledPeriodic() {}
+
+    @Override
+    public void disabledExit() {
+        LEDSubsystem.getInstance().setColor(StatusColors.OFF);
+    }
 
     @Override
     public void autonomousInit() {
@@ -88,6 +101,13 @@ public class Robot extends LoggedRobot {
             this.auton.schedule();
         } else {
             System.err.println("No auton command found.");
+            Elastic.sendNotification(new Elastic.Notification(
+                    Elastic.NotificationLevel.ERROR,
+                    "Auton Error",
+                    "No auton command found."
+            ));
+
+            LEDSubsystem.getInstance().setColor(StatusColors.ERROR);
         }
 
         Elastic.selectTab(VirtualConstants.DashboardTabNames.AUTON);
@@ -100,6 +120,7 @@ public class Robot extends LoggedRobot {
     public void teleopInit() {
         if (auton != null) {
             this.auton.cancel();
+            LEDSubsystem.getInstance().setColor(StatusColors.OK);
         }
 
         Elastic.selectTab(VirtualConstants.DashboardTabNames.TELEOP);

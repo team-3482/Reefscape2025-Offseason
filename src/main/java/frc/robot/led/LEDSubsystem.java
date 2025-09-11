@@ -59,7 +59,7 @@ public class LEDSubsystem extends SubsystemBase {
         }
 
         double stickyTime = this.blinkColor.stickyTime;
-        // Blink color will always be current color, unless blinking, when it will always be the blink color
+        // Blink color will always be current color, unless blinking, when it is always the blink color
         if (stickyTime >= 0 && this.stickyTimer.hasElapsed(stickyTime)) {
             setColor(StatusColors.OFF);
         }
@@ -133,7 +133,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     /**
-     * Blinks the color every LEDConsants.BLINK_COOLDOWN
+     * Blinks the color every LEDConstants.BLINK_COOLDOWN
      * @param newColor - The color to blink.
      */
     public void blinkColor(StatusColors newColor) {
@@ -151,7 +151,7 @@ public class LEDSubsystem extends SubsystemBase {
     /**
      * Gets color of the current strip.
      * @return The color of the strip.
-     * @apiNote This uses the FIRST index of the led strip (first node),
+     * @apiNote This uses the FIRST index of the LED strip (first node),
      * but this should not be a problem because we always set the whole strip to a solid color.
      * @apiNote Returns null if the color doesn't exist in StatusColors.
      */
