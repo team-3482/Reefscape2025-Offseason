@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -55,6 +56,7 @@ public class Robot extends LoggedRobot {
             Logger.start();
         }
 
+        FollowPathCommand.warmupCommand().schedule();
         // Eager-load the auton command so it's ready right away
         RobotContainer.getInstance().getAutonomousCommand();
     }
@@ -84,8 +86,7 @@ public class Robot extends LoggedRobot {
 
         if (this.auton != null) {
             this.auton.schedule();
-        }
-        else {
+        } else {
             System.err.println("No auton command found.");
         }
 
