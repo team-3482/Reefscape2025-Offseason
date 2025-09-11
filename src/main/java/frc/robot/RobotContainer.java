@@ -46,6 +46,7 @@ public class RobotContainer {
     }
 
     /** Creates instances of each subsystem so periodic runs on startup. */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
         // ExampleSubsystem.getInstance();
     }
