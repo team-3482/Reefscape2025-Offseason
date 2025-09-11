@@ -13,16 +13,15 @@ public class ExampleSubsystem extends SubsystemBase {
         private static final ExampleSubsystem INSTANCE = new ExampleSubsystem();
     }
 
+    /** Always use this method to get the singleton instance of this subsystem. */
     public static ExampleSubsystem getInstance() {
         return ExampleSubsystemHolder.INSTANCE;
     }
 
-    /** Creates a new ExampleSubsystem. */
     private ExampleSubsystem() {
         super("ExampleSubsystem");
     }
 
-    // This method will be called once per scheduler run
     @Override
     public void periodic() {}
 }
