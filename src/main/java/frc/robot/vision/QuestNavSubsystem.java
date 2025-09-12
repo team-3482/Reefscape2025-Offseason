@@ -29,7 +29,7 @@ public class QuestNavSubsystem extends SubsystemBase {
     PoseFrame[] poseFrames;
 
     private QuestNavSubsystem() {
-        super("ExampleSubsystem");
+        super("QuestNavSubsystem");
     }
 
     @Override
