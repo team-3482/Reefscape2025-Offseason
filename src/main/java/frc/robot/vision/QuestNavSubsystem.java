@@ -5,11 +5,13 @@
 package frc.robot.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 
 import frc.robot.constants.VisionConstants.QuestNavConstants;
+import org.littletonrobotics.junction.Logger;
 
 /** Subsystem to manage all QuestNav related logic */
 public class QuestNavSubsystem extends SubsystemBase {
@@ -41,6 +43,12 @@ public class QuestNavSubsystem extends SubsystemBase {
 
             updateSwervePoseEstimation();
         }
+
+        SmartDashboard.putNumber("QuestNav/Latency", questNav.getLatency());
+        SmartDashboard.putNumber("QuestNav/FramesPerRobotCycle", poseFrames.length);
+
+        Logger.recordOutput("QuestNav/Latency", questNav.getLatency());
+        Logger.recordOutput("QuestNav/FramesPerRobotCycle", poseFrames.length);
     }
 
     /**

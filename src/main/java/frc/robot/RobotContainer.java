@@ -12,6 +12,7 @@ import frc.robot.constants.VirtualConstants.ControllerConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.vision.LimelightSubsystem;
+import frc.robot.vision.QuestNavSubsystem;
 
 public class RobotContainer {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
@@ -50,6 +51,7 @@ public class RobotContainer {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
         LimelightSubsystem.getInstance();
+        QuestNavSubsystem.getInstance();
     }
 
     /** Configures the button bindings of the driver controller. */
