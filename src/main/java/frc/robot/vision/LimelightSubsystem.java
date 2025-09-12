@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.constants.VirtualConstants.TagSets;
-import frc.robot.constants.VirtualConstants.LimelightConstants;
+import frc.robot.constants.VisionConstants.TagSets;
+import frc.robot.constants.VisionConstants.LimelightConstants;
 //import frc.robot.led.LEDSubsystem; // TODO led
 //import frc.robot.led.StatusColors; // TODO led
 //import frc.robot.swerve.SwerveSubsystem; // TODO led

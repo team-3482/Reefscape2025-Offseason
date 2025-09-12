@@ -3,7 +3,7 @@ package frc.robot.vision;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
-import frc.robot.constants.VirtualConstants.LimelightConstants;
+import frc.robot.constants.VisionConstants.LimelightConstants;
 
 /**
  * <p>A helper class used for storing MegaTag and MegaTag2 data from a Limelight
