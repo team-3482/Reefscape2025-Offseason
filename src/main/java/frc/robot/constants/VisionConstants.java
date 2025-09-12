@@ -1,5 +1,12 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
+
 import java.util.Set;
 
 /** Constants for vision subsystems */
@@ -77,5 +84,23 @@ public final class VisionConstants {
         public static final Set<Integer> PROCESSOR_TAGS = Set.of(3, 16);
         @Deprecated
         public static final Set<Integer> BARGE_TAGS = Set.of(4, 5, 14, 15);
+    }
+
+    /** Constants used by QuestNav */
+    public static final class QuestNavConstants {
+        /**
+         * Quest mounting offsets
+         * X (positive) -> forward from robot center
+         * Y (positive) -> left from robot center
+         * Rotation (positive) -> counter-clockwise
+         */
+        public static final Transform2d ROBOT_TO_QUEST = new Transform2d(); // TODO quest offset
+
+        /** Standard Deviations for Trust */
+        public static final Matrix<N3, N1> TRUST_STD_DEVS = VecBuilder.fill(
+                0.02, // Trust down to 2cm in X direction
+                0.02, // Trust down to 2cm in Y direction
+                Units.degreesToRadians(2) // Trust down to 2 degrees rotational
+        );
     }
 }
