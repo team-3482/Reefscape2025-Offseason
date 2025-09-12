@@ -41,7 +41,7 @@ public final class VirtualConstants {
 
         /**
          * The distance within which to use Limelight data in meters. This is measured from tag to camera.
-         * When entering this range, the VisionSubsystem will reset the odometry to the current LL pose.
+         * When entering this range, the LimelightSubsystem will reset the odometry to the current LL pose.
          */
         public static final double REEF_TRUST_RANGE = 1.5;
         public static final double TRUST_RANGE = 4;

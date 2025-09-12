@@ -10,7 +10,7 @@ import frc.robot.constants.VirtualConstants.LimelightConstants;
  * to avoid unnecessary calls to the NetworkTables API.
  * @apiNote MT rotation should not be combined with MT2 pose, because their timestamps may differ.
  */
-public class VisionData {
+public class LimelightData {
     public final String name;
     public final LimelightHelpers.PoseEstimate MegaTag;
     public final LimelightHelpers.PoseEstimate MegaTag2;
@@ -37,11 +37,11 @@ public class VisionData {
      * @param MegaTag data.
      * @param MegaTag2 data.
      * @param leftX - Leftmost corner pixel x-coordinate.
-     * @param rightY - Rightmost corner pixel x-coordinate.
+     * @param rightX - Rightmost corner pixel x-coordinate.
      * @param bottomY - Bottommost corner pixel y-coordinate.
      * @param topY - Topmost corner pixel y-coordinate.
      */
-    public VisionData(
+    public LimelightData(
         String name, LimelightHelpers.PoseEstimate MegaTag, LimelightHelpers.PoseEstimate MegaTag2,
         double leftX, double rightX, double bottomY, double topY
     ) {

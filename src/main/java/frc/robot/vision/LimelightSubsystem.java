@@ -4,8 +4,6 @@
 
 package frc.robot.vision;
 
-import static edu.wpi.first.units.Units.Meters;
-
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -16,12 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -44,13 +39,13 @@ import org.littletonrobotics.junction.Logger;
  * <p>Optimizes detection for better performance and pushes
  * position updates to the internal odometer.
  */
-public class VisionSubsystem extends SubsystemBase {
+public class LimelightSubsystem extends SubsystemBase {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
     private static class VisionSubsystemHolder {
-        private static final VisionSubsystem INSTANCE = new VisionSubsystem();
+        private static final LimelightSubsystem INSTANCE = new LimelightSubsystem();
     }
     
-    public static VisionSubsystem getInstance() {
+    public static LimelightSubsystem getInstance() {
         return VisionSubsystemHolder.INSTANCE;
     }
 
@@ -61,7 +56,7 @@ public class VisionSubsystem extends SubsystemBase {
      * Latest Limelight data. May contain faulty data unsuitable for odometry.
      * @apiNote [ Left, Right ]
      */
-    private VisionData[] limelightDatas = new VisionData[2];
+    private LimelightData[] limelightDatas = new LimelightData[2];
     /** Last heartbeat of the front LL (updated every frame) */
     private long lastHeartbeatBottomRightLL = 0;
     /** Last heartbeat of the back LL (updated every frame) */
@@ -76,9 +71,9 @@ public class VisionSubsystem extends SubsystemBase {
     /** Not ideal but the easiest implementation. */
     public volatile boolean waitingForLimelights = false;
 
-    /** Creates a new VisionSubsystem. */
-    private VisionSubsystem() {
-        super("VisionSubsystem");
+    /** Creates a new LimelightSubsystem. */
+    private LimelightSubsystem() {
+        super("LimelightSubsystem");
 
         if (LimelightConstants.PUBLISH_CAMERA_FEEDS) {
             // Shuffleboard camera feeds.
@@ -127,7 +122,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumberArray(
             "Primary Tag In View", 
-            VisionSubsystem.pose2dToArray(AprilTagMap.getPoseFromID(primaryTag, true))
+            LimelightSubsystem.pose2dToArray(AprilTagMap.getPoseFromID(primaryTag, true))
         );
 
         SmartDashboard.putBoolean("Vision/ReefInView", reef);
@@ -144,7 +139,7 @@ public class VisionSubsystem extends SubsystemBase {
     private void notifierLoop() {
         // This loop generally updates data in about 6 ms, but may double or triple for no apparent reason.
         // This causes loop overrun warnings, however, it doesn't seem to be due to inefficient code and thus can be ignored.
-        for (VisionData data : fetchLimelightData()) { // This method gets data in about 6 to 10 ms.
+        for (LimelightData data : fetchLimelightData()) { // This method gets data in about 6 to 10 ms.
             if (data.optimized || data.MegaTag == null || data.MegaTag2 == null) continue;
 
             /* TODO swerve
@@ -183,12 +178,12 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /**
-     * Updates and returns {@link VisionSubsystem#limelightDatas}.
+     * Updates and returns {@link LimelightSubsystem#limelightDatas}.
      * @return LimelightData for each trustworthy Limelight data.
      * @apiNote Will theoretically stop updating data if the heartbeat resets.
      * However, this happens at 2e9 frames, which would take consecutive 96 days at a consistent 240 fps.
      */
-    private VisionData[] fetchLimelightData() {
+    private LimelightData[] fetchLimelightData() {
         long heartbeatBottomRightLL = -1;
         long heartbeatBottomLeftLL = -1;
 
@@ -217,17 +212,17 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         // There is no point actually filtering out nonexistent or null data,
-        // because the code in the notifierLoop method will call VisionData's
+        // because the code in the notifierLoop method will call LimelightData's
         // methods to see if the data is valid for position/rotation.
         return this.limelightDatas;
     }
 
     /**
-     * Helper that creates the VisionData object for a limelight.
+     * Helper that creates the LimelightData object for a limelight.
      * @param limelight - The limelight to process data for.
-     * @return The VisionData.
+     * @return The LimelightData.
      */
-    private VisionData getVisionData(String limelight) {
+    private LimelightData getVisionData(String limelight) {
         LimelightHelpers.PoseEstimate mt = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelight);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight);
 
@@ -290,14 +285,14 @@ public class VisionSubsystem extends SubsystemBase {
             }
         }
 
-        return new VisionData(limelight, mt, mt2, leftX, rightX, bottomY, topY);
+        return new LimelightData(limelight, mt, mt2, leftX, rightX, bottomY, topY);
     }
 
     /**
      * A helper method used to optimize Limelight FPS.
      */
     private void optimizeLimelights() {
-        for (VisionData limelightData : this.limelightDatas) {
+        for (LimelightData limelightData : this.limelightDatas) {
             if (limelightData == null || limelightData.optimized) {
                 continue;
             }
@@ -435,8 +430,8 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public static class Pose2dAndTimestamp {
-        public static final VisionSubsystem.Pose2dAndTimestamp kZero =
-            new VisionSubsystem.Pose2dAndTimestamp(Pose2d.kZero, 0);
+        public static final LimelightSubsystem.Pose2dAndTimestamp kZero =
+            new LimelightSubsystem.Pose2dAndTimestamp(Pose2d.kZero, 0);
         public final Pose2d pose2d;
         public final double timestampSeconds;
 
@@ -452,9 +447,9 @@ public class VisionSubsystem extends SubsystemBase {
      * @apiNote Does NOT filter for accuracy based on distance, etc. This is raw data at the instant the method was called.
      * This method is not ideal, because Limelights have a significant latency to position updates.
      */
-    public VisionSubsystem.Pose2dAndTimestamp getPose2d() {
-        VisionData leftLL = getVisionData(LimelightConstants.BOTTOM_LEFT_LL);
-        VisionData rightLL = getVisionData(LimelightConstants.BOTTOM_RIGHT_LL);
+    public LimelightSubsystem.Pose2dAndTimestamp getPose2d() {
+        LimelightData leftLL = getVisionData(LimelightConstants.BOTTOM_LEFT_LL);
+        LimelightData rightLL = getVisionData(LimelightConstants.BOTTOM_RIGHT_LL);
 
         Pose2d leftPose, rightPose;
         leftPose = rightPose = null;
@@ -479,13 +474,13 @@ public class VisionSubsystem extends SubsystemBase {
             );
         }
 
-        if (leftPose == null && rightPose == null) return VisionSubsystem.Pose2dAndTimestamp.kZero;
-        else if (leftPose == null) return new VisionSubsystem.Pose2dAndTimestamp(rightPose, rightLL.MegaTag2.timestampSeconds);
-        else if (rightPose == null) return new VisionSubsystem.Pose2dAndTimestamp(leftPose, leftLL.MegaTag2.timestampSeconds);
+        if (leftPose == null && rightPose == null) return LimelightSubsystem.Pose2dAndTimestamp.kZero;
+        else if (leftPose == null) return new LimelightSubsystem.Pose2dAndTimestamp(rightPose, rightLL.MegaTag2.timestampSeconds);
+        else if (rightPose == null) return new LimelightSubsystem.Pose2dAndTimestamp(leftPose, leftLL.MegaTag2.timestampSeconds);
 
         return leftLL.MegaTag2.timestampSeconds < rightLL.MegaTag2.timestampSeconds
-            ? new VisionSubsystem.Pose2dAndTimestamp(leftPose, leftLL.MegaTag2.timestampSeconds)
-            : new VisionSubsystem.Pose2dAndTimestamp(rightPose, rightLL.MegaTag2.timestampSeconds);
+            ? new LimelightSubsystem.Pose2dAndTimestamp(leftPose, leftLL.MegaTag2.timestampSeconds)
+            : new LimelightSubsystem.Pose2dAndTimestamp(rightPose, rightLL.MegaTag2.timestampSeconds);
     }
 
     /**
