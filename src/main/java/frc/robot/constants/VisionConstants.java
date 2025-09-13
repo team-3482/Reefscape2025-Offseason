@@ -16,10 +16,8 @@ public final class VisionConstants {
         /** Enables publishing of the CameraFeeds to dashboard on startup. */
         public static final boolean PUBLISH_CAMERA_FEEDS = true;
 
-        /** Bottom Limelight (Reef). */
-        public static final String BOTTOM_RIGHT_LL = "limelight-stheno";
-        /** Top Limelight (Processor/Barge). */
-        public static final String BOTTOM_LEFT_LL = "limelight-euryale";
+        /** Bottom Limelight (Reef) */
+        public static final String BOTTOM_LL = "limelight-stheno";
 
         /**
          * The distance within which to use Limelight data in meters. This is measured from tag to camera.
@@ -31,11 +29,11 @@ public final class VisionConstants {
 
         /** All valid tag IDs (used for tag filtering) */
         public static final int[] ALL_TAG_IDS = new int[]{
-                1, 2, 3, 4, 5,
-                6, 7, 8, 9, 10,
-                11, 12, 13, 14,
-                15, 16, 17, 18,
-                19, 20, 21, 22
+            1, 2, 3, 4, 5,
+            6, 7, 8, 9, 10,
+            11, 12, 13, 14,
+            15, 16, 17, 18,
+            19, 20, 21, 22
         };
 
         /**
@@ -98,9 +96,9 @@ public final class VisionConstants {
 
         /** Standard Deviations for Trust */
         public static final Matrix<N3, N1> TRUST_STD_DEVS = VecBuilder.fill(
-                0.02, // Trust down to 2cm in X direction
-                0.02, // Trust down to 2cm in Y direction
-                Units.degreesToRadians(2) // Trust down to 2 degrees rotational
+            0.02, // Trust down to 2cm in X direction
+            0.02, // Trust down to 2cm in Y direction
+            Units.degreesToRadians(2) // Trust down to 2 degrees rotational
         );
     }
 }

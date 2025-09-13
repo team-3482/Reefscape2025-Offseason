@@ -34,7 +34,7 @@ import frc.robot.constants.AprilTagMap;
 
 import org.littletonrobotics.junction.Logger;
 
-/** 
+/**
  * A class that manages AprilTag Limelights for vision.
  * <p>Optimizes detection for better performance and pushes
  * position updates to the internal odometer.
@@ -44,7 +44,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private static class VisionSubsystemHolder {
         private static final LimelightSubsystem INSTANCE = new LimelightSubsystem();
     }
-    
+
     public static LimelightSubsystem getInstance() {
         return VisionSubsystemHolder.INSTANCE;
     }
@@ -56,12 +56,10 @@ public class LimelightSubsystem extends SubsystemBase {
      * Latest Limelight data. May contain faulty data unsuitable for odometry.
      * @apiNote [ Left, Right ]
      */
-    private LimelightData[] limelightDatas = new LimelightData[2];
+    private LimelightData limelightData;
     /** Last heartbeat of the front LL (updated every frame) */
-    private long lastHeartbeatBottomRightLL = 0;
-    /** Last heartbeat of the back LL (updated every frame) */
-    private long lastHeartbeatBottomLeftLL = 0;
-    
+    private long lastheartbeatBottomLL = 0;
+
     @SuppressWarnings("unused")
     private boolean[] withinReefRanges = new boolean[] { false, false};
     /** Used to prevent resetting position over-and-over when barely over the range, by adding a timeout before resetting again. */
@@ -77,21 +75,15 @@ public class LimelightSubsystem extends SubsystemBase {
 
         if (LimelightConstants.PUBLISH_CAMERA_FEEDS) {
             // Shuffleboard camera feeds.
-            HttpCamera bottomRightLLCamera = new HttpCamera(
-                LimelightConstants.BOTTOM_RIGHT_LL,
+            HttpCamera bottomLLCamera = new HttpCamera(
+                LimelightConstants.BOTTOM_LL,
                 "http://" + "10.34.82.12" + ":5800/stream.mjpg"
             );
-            HttpCamera bottomLeftLLCamera = new HttpCamera(
-                LimelightConstants.BOTTOM_LEFT_LL,
-                "http://" + "10.34.82.13" + ":5800/stream.mjpg"
-            );
 
-            CameraServer.startAutomaticCapture(bottomLeftLLCamera);
-            CameraServer.startAutomaticCapture(bottomRightLLCamera);
+            CameraServer.startAutomaticCapture(bottomLLCamera);
         }
 
-        LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.BOTTOM_RIGHT_LL, LimelightConstants.ALL_TAG_IDS);
-        LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.BOTTOM_LEFT_LL, LimelightConstants.ALL_TAG_IDS);
+        LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.BOTTOM_LL, LimelightConstants.ALL_TAG_IDS);
 
         this.notifier = new Notifier(this::notifierLoop);
         this.notifier.setName("Vision Notifier");
@@ -106,7 +98,7 @@ public class LimelightSubsystem extends SubsystemBase {
     public void periodic() {
         // Uses a Notifier for separate-thread Vision processing
         // These methods are here because they are NOT thread-safe
-        
+
         int primaryTag = getPrimaryTagInView();
         boolean reef = TagSets.REEF_TAGS.contains(primaryTag);
 
@@ -117,17 +109,16 @@ public class LimelightSubsystem extends SubsystemBase {
             ).in(Meters) >= LimelightConstants.REEF_ALIGN_RANGE
         ) {
             reef = false;
-        }
-        */
+        } */
 
         SmartDashboard.putNumberArray(
-            "Primary Tag In View", 
+            "Primary Tag In View",
             LimelightSubsystem.pose2dToArray(AprilTagMap.getPoseFromID(primaryTag, true))
         );
 
         SmartDashboard.putBoolean("Vision/ReefInView", reef);
         Logger.recordOutput("Vision/ReefInView", reef);
-        
+
         if (reef && DriverStation.isEnabled()) {
             //LEDSubsystem.getInstance().setColor(StatusColors.CAN_ALIGN); //TODO led
         }
@@ -139,82 +130,70 @@ public class LimelightSubsystem extends SubsystemBase {
     private void notifierLoop() {
         // This loop generally updates data in about 6 ms, but may double or triple for no apparent reason.
         // This causes loop overrun warnings, however, it doesn't seem to be due to inefficient code and thus can be ignored.
-        for (LimelightData data : fetchLimelightData()) { // This method gets data in about 6 to 10 ms.
-            if (data.optimized || data.MegaTag == null || data.MegaTag2 == null) continue;
+        LimelightData data = fetchLimelightData(); // This method gets data in about 6 to 10 ms.
+        if (data.optimized || data.MegaTag == null || data.MegaTag2 == null) return;
 
-            /* TODO swerve
-            if (data.canTrustRotation()) {
-                // Only trust rotational data when adding this pose.
-                SwerveSubsystem.getInstance().setVisionMeasurementStdDevs(VecBuilder.fill(
-                    9999999,
-                    9999999,
-                    this.waitingForLimelights
-                        ? Units.degreesToRadians(25)
-                        : data.calculateRotationDeviation()
-                ));
-                SwerveSubsystem.getInstance().addVisionMeasurement(
-                    data.MegaTag.pose,
-                    Utils.fpgaToCurrentTime(data.MegaTag.timestampSeconds)
-                );
-            }
-
-            if (data.canTrustPosition()) {
-                // Only trust positional data when adding this pose.
-                SwerveSubsystem.getInstance().setVisionMeasurementStdDevs(VecBuilder.fill(
-                    this.waitingForLimelights ? 0.25 : data.calculatePositionDeviation(),
-                    this.waitingForLimelights ? 0.25 : data.calculatePositionDeviation(),
-                    9999999
-                ));
-                SwerveSubsystem.getInstance().addVisionMeasurement(
-                    data.MegaTag2.pose,
-                    Utils.fpgaToCurrentTime(data.MegaTag2.timestampSeconds)
-                );
-            }
-            */
+        /* TODO swerve
+        if (data.canTrustRotation()) {
+            // Only trust rotational data when adding this pose.
+            SwerveSubsystem.getInstance().setVisionMeasurementStdDevs(VecBuilder.fill(
+                9999999,
+                9999999,
+                this.waitingForLimelights
+                    ? Units.degreesToRadians(25)
+                    : data.calculateRotationDeviation()
+            ));
+            SwerveSubsystem.getInstance().addVisionMeasurement(
+                data.MegaTag.pose,
+                Utils.fpgaToCurrentTime(data.MegaTag.timestampSeconds)
+            );
         }
+
+        if (data.canTrustPosition()) {
+            // Only trust positional data when adding this pose.
+            SwerveSubsystem.getInstance().setVisionMeasurementStdDevs(VecBuilder.fill(
+                this.waitingForLimelights ? 0.25 : data.calculatePositionDeviation(),
+                this.waitingForLimelights ? 0.25 : data.calculatePositionDeviation(),
+                9999999
+            ));
+            SwerveSubsystem.getInstance().addVisionMeasurement(
+                data.MegaTag2.pose,
+                Utils.fpgaToCurrentTime(data.MegaTag2.timestampSeconds)
+            );
+        } */
 
         // This method is surprisingly efficient, generally below 1 ms.
         optimizeLimelights();
     }
 
     /**
-     * Updates and returns {@link LimelightSubsystem#limelightDatas}.
+     * Updates and returns {@link LimelightSubsystem#limelightData}.
      * @return LimelightData for each trustworthy Limelight data.
      * @apiNote Will theoretically stop updating data if the heartbeat resets.
      * However, this happens at 2e9 frames, which would take consecutive 96 days at a consistent 240 fps.
      */
-    private LimelightData[] fetchLimelightData() {
-        long heartbeatBottomRightLL = -1;
-        long heartbeatBottomLeftLL = -1;
+    private LimelightData fetchLimelightData() {
+        long heartbeatBottomLL = -1;
 
         // Periodic logic
         /* TODO swerve
         double rotationDegrees = SwerveSubsystem.getInstance().getState().Pose.getRotation().getDegrees();
-        LimelightHelpers.SetRobotOrientation(LimelightConstants.BOTTOM_RIGHT_LL,
-            rotationDegrees, 0, 0, 0, 0, 0
-        );
-        LimelightHelpers.SetRobotOrientation(LimelightConstants.BOTTOM_LEFT_LL,
+        LimelightHelpers.SetRobotOrientation(LimelightConstants.BOTTOM_LL,
             rotationDegrees, 0, 0, 0, 0, 0
         );
         */
-        
-        heartbeatBottomRightLL = LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.BOTTOM_RIGHT_LL, "hb").getInteger(-1);
-        heartbeatBottomLeftLL = LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.BOTTOM_LEFT_LL, "hb").getInteger(-1);
 
-        if (heartbeatBottomLeftLL == -1 || this.lastHeartbeatBottomLeftLL < heartbeatBottomLeftLL) {
-            this.limelightDatas[0] = getVisionData(LimelightConstants.BOTTOM_LEFT_LL);
-            this.lastHeartbeatBottomLeftLL = heartbeatBottomLeftLL == -1 ? this.lastHeartbeatBottomLeftLL : heartbeatBottomLeftLL;
-        }
+        heartbeatBottomLL = LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.BOTTOM_LL, "hb").getInteger(-1);
 
-        if (heartbeatBottomRightLL == -1 || this.lastHeartbeatBottomRightLL < heartbeatBottomRightLL) {
-            this.limelightDatas[1] = getVisionData(LimelightConstants.BOTTOM_RIGHT_LL);
-            this.lastHeartbeatBottomRightLL = heartbeatBottomRightLL == -1 ? this.lastHeartbeatBottomRightLL : heartbeatBottomRightLL;
+        if (heartbeatBottomLL == -1 || this.lastheartbeatBottomLL < heartbeatBottomLL) {
+            this.limelightData = getVisionData(LimelightConstants.BOTTOM_LL);
+            this.lastheartbeatBottomLL = heartbeatBottomLL == -1 ? this.lastheartbeatBottomLL : heartbeatBottomLL;
         }
 
         // There is no point actually filtering out nonexistent or null data,
         // because the code in the notifierLoop method will call LimelightData's
         // methods to see if the data is valid for position/rotation.
-        return this.limelightDatas;
+        return this.limelightData;
     }
 
     /**
@@ -239,7 +218,7 @@ public class LimelightSubsystem extends SubsystemBase {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(LimelightHelpers.getJSONDump(limelight));
             Iterator<JsonNode> fiducials = node.get("Fiducial").elements();
-            
+
             while (fiducials.hasNext()) {
                 JsonNode pts = fiducials.next().get("pts");
                 for (int i = 0; i < 4; i++) {
@@ -292,87 +271,83 @@ public class LimelightSubsystem extends SubsystemBase {
      * A helper method used to optimize Limelight FPS.
      */
     private void optimizeLimelights() {
-        for (LimelightData limelightData : this.limelightDatas) {
-            if (limelightData == null || limelightData.optimized) {
-                continue;
-            }
-            else {
-                limelightData.optimized = true;
-            }
-            
-            // Avoid unnecessary optimization for a LL with no tags and
-            // reset any optimization that might have been done previously.
-            if (limelightData.MegaTag2 == null || limelightData.MegaTag2.tagCount == 0) {
-                LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 1.0f);
-                LimelightHelpers.setCropWindow(
-                    limelightData.name,
-                    LimelightConstants.DEFAULT_BOTTTOM_CROP[0],
-                    LimelightConstants.DEFAULT_BOTTTOM_CROP[1],
-                    LimelightConstants.DEFAULT_BOTTTOM_CROP[2],
-                    LimelightConstants.DEFAULT_BOTTTOM_CROP[3]
-                );
-                continue;
-            }
-
-            // Downscaling closer to tags.
-            if (DriverStation.isDisabled()) {
-                LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 1.0f);
-            }
-            // else if (limelightData.MegaTag2.avgTagDist < 1) {
-            //     LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 3.0f);
-            // }
-            // else if (limelightData.MegaTag2.avgTagDist < 2) {
-            //     LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 2.0f);
-            // }
-            // else if (limelightData.MegaTag2.avgTagDist < 3) {
-            //     LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 1.5f);
-            // }
-            else {
-                LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 1.0f);
-            }
-
-            // Smart cropping around on-screen AprilTags
-            if (limelightData.leftX == -1
-                || limelightData.MegaTag2.avgTagDist < 0.5
-                || (DriverStation.isDisabled() && DriverStation.isAutonomous()) 
-            ) {
-                LimelightHelpers.setCropWindow(
-                    limelightData.name,
-                    LimelightConstants.DEFAULT_BOTTTOM_CROP[0],
-                    LimelightConstants.DEFAULT_BOTTTOM_CROP[1],
-                    LimelightConstants.DEFAULT_BOTTTOM_CROP[2],
-                    LimelightConstants.DEFAULT_BOTTTOM_CROP[3]
-                );
-            } /* TODO swerve
-            else {
-                double leftCrop = limelightData.leftX / (LimelightConstants.RES_X / 2) - 1;
-                double rightCrop = limelightData.rightX / (LimelightConstants.RES_X / 2) - 1;
-                double bottomCrop = limelightData.bottomY / (LimelightConstants.RES_Y / 2) - 1;
-                double topCrop = limelightData.topY / (LimelightConstants.RES_Y / 2) - 1;
-
-                // Remember, LL data has latency !
-                // If the robot is moving, a crop will happen too late and could be too small thus losing data when it is applied.
-                ChassisSpeeds robotSpeeds = SwerveSubsystem.getInstance().getState().Speeds;
-                double speed = Math.hypot(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond);
-                double speedAdjustment = speed >= 0.5 ? LimelightConstants.BOUNDING_BOX : 0;
-                double sideAdjustment = Math.abs(robotSpeeds.omegaRadiansPerSecond) >= Math.toRadians(25)
-                    ? Math.abs(robotSpeeds.omegaRadiansPerSecond) * LimelightConstants.BOUNDING_BOX / (0.44 * 2)
-                    : 0;
-
-                leftCrop -= LimelightConstants.BOUNDING_BOX + speedAdjustment + sideAdjustment;
-                rightCrop += LimelightConstants.BOUNDING_BOX + speedAdjustment + sideAdjustment;
-
-                // if (DriverStation.isAutonomous() && limelightData.MegaTag2.avgTagDist > 0.75) {
-                //     leftCrop = -1;
-                //     rightCrop = 1;
-                // }
-                
-                bottomCrop -= LimelightConstants.BOUNDING_BOX + speedAdjustment;
-                topCrop += LimelightConstants.BOUNDING_BOX + speedAdjustment;
-
-                LimelightHelpers.setCropWindow(limelightData.name, leftCrop, rightCrop, bottomCrop, topCrop);
-            } */
+        if (limelightData == null || limelightData.optimized) {
+            return;
+        } else {
+            limelightData.optimized = true;
         }
+
+        // Avoid unnecessary optimization for a LL with no tags and
+        // reset any optimization that might have been done previously.
+        if (limelightData.MegaTag2 == null || limelightData.MegaTag2.tagCount == 0) {
+            LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 1.0f);
+            LimelightHelpers.setCropWindow(
+                limelightData.name,
+                LimelightConstants.DEFAULT_BOTTTOM_CROP[0],
+                LimelightConstants.DEFAULT_BOTTTOM_CROP[1],
+                LimelightConstants.DEFAULT_BOTTTOM_CROP[2],
+                LimelightConstants.DEFAULT_BOTTTOM_CROP[3]
+            );
+            return;
+        }
+
+        // Downscaling closer to tags.
+        if (DriverStation.isDisabled()) {
+            LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 1.0f);
+        }
+        // else if (limelightData.MegaTag2.avgTagDist < 1) {
+        //     LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 3.0f);
+        // }
+        // else if (limelightData.MegaTag2.avgTagDist < 2) {
+        //     LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 2.0f);
+        // }
+        // else if (limelightData.MegaTag2.avgTagDist < 3) {
+        //     LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 1.5f);
+        // }
+        else {
+            LimelightHelpers.SetFiducialDownscalingOverride(limelightData.name, 1.0f);
+        }
+
+        // Smart cropping around on-screen AprilTags
+        if (limelightData.leftX == -1
+            || limelightData.MegaTag2.avgTagDist < 0.5
+            || (DriverStation.isDisabled() && DriverStation.isAutonomous())
+        ) {
+            LimelightHelpers.setCropWindow(
+                limelightData.name,
+                LimelightConstants.DEFAULT_BOTTTOM_CROP[0],
+                LimelightConstants.DEFAULT_BOTTTOM_CROP[1],
+                LimelightConstants.DEFAULT_BOTTTOM_CROP[2],
+                LimelightConstants.DEFAULT_BOTTTOM_CROP[3]
+            );
+        } /* else { // TODO swerve
+            double leftCrop = limelightData.leftX / (LimelightConstants.RES_X / 2) - 1;
+            double rightCrop = limelightData.rightX / (LimelightConstants.RES_X / 2) - 1;
+            double bottomCrop = limelightData.bottomY / (LimelightConstants.RES_Y / 2) - 1;
+            double topCrop = limelightData.topY / (LimelightConstants.RES_Y / 2) - 1;
+
+            // Remember, LL data has latency !
+            // If the robot is moving, a crop will happen too late and could be too small thus losing data when it is applied.
+            ChassisSpeeds robotSpeeds = SwerveSubsystem.getInstance().getState().Speeds;
+            double speed = Math.hypot(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond);
+            double speedAdjustment = speed >= 0.5 ? LimelightConstants.BOUNDING_BOX : 0;
+            double sideAdjustment = Math.abs(robotSpeeds.omegaRadiansPerSecond) >= Math.toRadians(25)
+                ? Math.abs(robotSpeeds.omegaRadiansPerSecond) * LimelightConstants.BOUNDING_BOX / (0.44 * 2)
+                : 0;
+
+            leftCrop -= LimelightConstants.BOUNDING_BOX + speedAdjustment + sideAdjustment;
+            rightCrop += LimelightConstants.BOUNDING_BOX + speedAdjustment + sideAdjustment;
+
+            // if (DriverStation.isAutonomous() && limelightData.MegaTag2.avgTagDist > 0.75) {
+            //     leftCrop = -1;
+            //     rightCrop = 1;
+            // }
+
+            bottomCrop -= LimelightConstants.BOUNDING_BOX + speedAdjustment;
+            topCrop += LimelightConstants.BOUNDING_BOX + speedAdjustment;
+
+            LimelightHelpers.setCropWindow(limelightData.name, leftCrop, rightCrop, bottomCrop, topCrop);
+        } */
     }
 
     /**
@@ -382,8 +357,7 @@ public class LimelightSubsystem extends SubsystemBase {
      * Returns an empty optional if there are no tags in view for either Limelight.
      */
     public Optional<Pose2d> getEstimatedPosition_TargetSpace() {
-        return getEstimatedPosition_TargetSpace(LimelightConstants.BOTTOM_RIGHT_LL)
-            .or(() -> getEstimatedPosition_TargetSpace(LimelightConstants.BOTTOM_LEFT_LL));
+        return getEstimatedPosition_TargetSpace(LimelightConstants.BOTTOM_LL);
     }
 
     /**
@@ -403,7 +377,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
         return Optional.of(new Pose2d(
             new Translation2d(poseArray[0], poseArray[2]),
-                Rotation2d.fromDegrees(poseArray[4])
+            Rotation2d.fromDegrees(poseArray[4])
         ));
     }
 
@@ -412,11 +386,7 @@ public class LimelightSubsystem extends SubsystemBase {
      * @return The tag ID.
      */
     public int getPrimaryTagInView() {
-        int id = getPrimaryTagInView(LimelightConstants.BOTTOM_RIGHT_LL);
-        if (id == -1) {
-            id = getPrimaryTagInView(LimelightConstants.BOTTOM_LEFT_LL);
-        }
-        return id;
+        return getPrimaryTagInView(LimelightConstants.BOTTOM_LL);
     }
 
     /**
@@ -448,39 +418,23 @@ public class LimelightSubsystem extends SubsystemBase {
      * This method is not ideal, because Limelights have a significant latency to position updates.
      */
     public LimelightSubsystem.Pose2dAndTimestamp getPose2d() {
-        LimelightData leftLL = getVisionData(LimelightConstants.BOTTOM_LEFT_LL);
-        LimelightData rightLL = getVisionData(LimelightConstants.BOTTOM_RIGHT_LL);
+        LimelightData rightLL = getVisionData(LimelightConstants.BOTTOM_LL);
 
-        Pose2d leftPose, rightPose;
-        leftPose = rightPose = null;
-
-        if (
-            leftLL.MegaTag2 != null && leftLL.MegaTag2.tagCount > 0
-            && leftLL.MegaTag != null && leftLL.MegaTag.tagCount > 0
-        ) {
-            leftPose = new Pose2d(
-                leftLL.MegaTag2.pose.getTranslation(),
-                leftLL.MegaTag.pose.getRotation()
-            );
-        }
+        Pose2d bottomPose;
+        bottomPose = null;
 
         if (
             rightLL.MegaTag2 != null && rightLL.MegaTag2.tagCount > 0
-            && rightLL.MegaTag != null && rightLL.MegaTag.tagCount > 0
+                && rightLL.MegaTag != null && rightLL.MegaTag.tagCount > 0
         ) {
-            rightPose = new Pose2d(
+            bottomPose = new Pose2d(
                 rightLL.MegaTag2.pose.getTranslation(),
                 rightLL.MegaTag.pose.getRotation()
             );
         }
 
-        if (leftPose == null && rightPose == null) return LimelightSubsystem.Pose2dAndTimestamp.kZero;
-        else if (leftPose == null) return new LimelightSubsystem.Pose2dAndTimestamp(rightPose, rightLL.MegaTag2.timestampSeconds);
-        else if (rightPose == null) return new LimelightSubsystem.Pose2dAndTimestamp(leftPose, leftLL.MegaTag2.timestampSeconds);
-
-        return leftLL.MegaTag2.timestampSeconds < rightLL.MegaTag2.timestampSeconds
-            ? new LimelightSubsystem.Pose2dAndTimestamp(leftPose, leftLL.MegaTag2.timestampSeconds)
-            : new LimelightSubsystem.Pose2dAndTimestamp(rightPose, rightLL.MegaTag2.timestampSeconds);
+        if (bottomPose == null) return LimelightSubsystem.Pose2dAndTimestamp.kZero;
+        else return new LimelightSubsystem.Pose2dAndTimestamp(bottomPose, rightLL.MegaTag2.timestampSeconds);
     }
 
     /**
