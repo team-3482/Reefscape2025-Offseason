@@ -18,5 +18,9 @@ public class PhysicalConstants {
         public static final int LED_LENGTH = 80;
         /** Blink cooldown; time that the selected blink color will stay for, then blink */
         public static final double BLINK_COOLDOWN = 0.2;
+        /** Animate scrolling gradient for the LEDs */
+        public static final boolean SCROLL = true; // Might cause horrible performance issues, turn off if rio lagging
+        /** How fast (m/s) to scroll */
+        public static final double SCROLL_SPEED = 1.0;
     }
 }
