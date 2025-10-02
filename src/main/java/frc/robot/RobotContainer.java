@@ -31,20 +31,6 @@ public class RobotContainer {
         return RobotContainerHolder.INSTANCE;
     }
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(Units.MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = Units.RotationsPerSecond.of(0.75).in(Units.RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-    /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
-    private final SwerveTelemetry logger = new SwerveTelemetry(MaxSpeed);
-
-    public final SwerveSubsystem drivetrain = TunerConstants.createDrivetrain();
-
     private final SendableChooser<Command> autoChooser;
     private Command auton = null;
 
@@ -53,10 +39,7 @@ public class RobotContainer {
     // private final CommandXboxController operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_ID);
 
     public RobotContainer() {
-        // Configure the controller bindings
-        configureDriverBindings();
-        configureOperatorBindings();
-
+        configureDrivetrain();
         initializeSubsystems();
 
         this.autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
@@ -72,17 +55,34 @@ public class RobotContainer {
         // ExampleSubsystem.getInstance();
     }
 
-    /** Configures the button bindings of the driver controller. */
-    public void configureDriverBindings() {
+    /**
+     * This method initializes the swerve subsystem and configures its bindings with the driver controller.
+     * This is based on the Phoenix6 Swerve example.
+     */
+    private void configureDrivetrain(){
+        final SwerveSubsystem drivetrain = SwerveSubsystem.getInstance();
+
+        final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(Units.MetersPerSecond); // kSpeedAt12Volts desired top speed
+        final double MaxAngularRate = Units.RotationsPerSecond.of(0.75).in(Units.RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+        /* Setting up bindings for necessary control of the swerve drive platform */
+        final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+        final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+        final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+
+        final SwerveTelemetry logger = new SwerveTelemetry(MaxSpeed);
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
+            drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        )
         );
 
         // Idle while the robot is disabled. This ensures the configured
@@ -109,6 +109,9 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
+
+    /** Configures the button bindings of the driver controller. */
+    public void configureDriverBindings() {}
 
     /** Configures the button bindings of the operator controller. */
     public void configureOperatorBindings() {}
