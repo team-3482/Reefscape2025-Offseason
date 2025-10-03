@@ -6,13 +6,12 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -31,7 +30,7 @@ public class RobotContainer {
         return RobotContainerHolder.INSTANCE;
     }
 
-    private final SendableChooser<Command> autoChooser;
+    // private final SendableChooser<Command> autoChooser; // TODO PathPlanner
     private Command auton = null;
 
     // Instance of the controllers used to drive the robot
@@ -42,10 +41,11 @@ public class RobotContainer {
         configureDrivetrain();
         initializeSubsystems();
 
+        /* TODO PathPlanner
         this.autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
         this.autoChooser.onChange((Command autoCommand) -> this.auton = autoCommand); // Reloads the stored auto
 
-        SmartDashboard.putData("Auto Chooser", this.autoChooser);
+        SmartDashboard.putData("Auto Chooser", this.autoChooser); */
         SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
     }
 
@@ -122,7 +122,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         if (this.auton == null) {
-            this.auton = this.autoChooser.getSelected();
+            this.auton = Commands.none(); //this.autoChooser.getSelected(); // TODO PathPlanner
         }
         return this.auton;
     }
