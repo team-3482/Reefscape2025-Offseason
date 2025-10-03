@@ -21,7 +21,6 @@ public class ManipulatorSubsystem extends SubsystemBase {
         return ManipulatorSubsystemHolder.INSTANCE;
     }
 
-    private TalonFX pivotMotor = new TalonFX(ManipulatorConstants.PIVOT_MOTOR_ID);
     private TalonFX coralMotor = new TalonFX(ManipulatorConstants.CORAL_MOTOR_ID);
     private TalonFX algaeMotor = new TalonFX(ManipulatorConstants.ALGAE_MOTOR_ID);
 
@@ -32,29 +31,19 @@ public class ManipulatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {}
 
-    // TODO: javadocs
-
-    public void intakeCoral() {
-        coralMotor.set(ManipulatorConstants.CORAL_INTAKE_SPEED);
+    /**
+     * Set the speed of the coral motor.
+     * @param speed - Speed between -1.0 and 1.0
+     */
+    public void setCoralMotor(double speed) {
+        coralMotor.set(speed);
     }
 
-    public void outtakeCoral() {
-        coralMotor.set(-ManipulatorConstants.CORAL_OUTTAKE_SPEED);
-    }
-
-    public void intakeAlgae() {
-        algaeMotor.set(-ManipulatorConstants.ALGAE_INTAKE_SPEED);
-    }
-
-    public void outtakeAlgae() {
-        algaeMotor.set(ManipulatorConstants.ALGAE_OUTTAKE_SPEED);
-    }
-
-    public void stopCoral() {
-        coralMotor.set(0);
-    }
-
-    public void stopAlgae() {
-        coralMotor.set(0);
+    /**
+     * Set the speed of the algae motor.
+     * @param speed - Speed between -1.0 and 1.0
+     */
+    public void setAlgaeMotor(double speed) {
+        algaeMotor.set(speed);
     }
 }
