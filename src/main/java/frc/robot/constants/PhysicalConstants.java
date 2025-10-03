@@ -14,8 +14,8 @@ public final class PhysicalConstants {
         public static final double CORAL_OUTTAKE_SPEED = 0;
         // The speed at which the algae motor will go at to outtake the algae ball
         public static final double ALGAE_OUTTAKE_SPEED = 0;
-        // The speed at which the coral motor will go at to hold the coral tube in place
-        public static final double CORAL_STALL_SPEED = 0;
+        // The speed at which the algae motor will go at to hold the coral tube in place
+        public static final double ALGAE_STALL_SPEED = 0;
 
         // TODO: Fill these ids out
         // The TalonFX motor id for the coral motor
