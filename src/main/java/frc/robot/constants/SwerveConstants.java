@@ -70,9 +70,20 @@ public class SwerveConstants {
     // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
     private static final Pigeon2Configuration pigeonConfigs = null;
 
-    // Theoretical free speed (m/s) at 12 V applied output;
-    // This needs to be tuned to your individual robot
+    /**
+     * Theoretical free speed (m/s) at 12 V applied output;
+     * This needs to be tuned to your individual robot
+     */
     public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.73); // default was 4.73
+
+    /** Realistic speed robot to run at */
+    public static final LinearVelocity kSpeedNormal = MetersPerSecond.of(3.5);
+
+    /** Normal angular (turning) speed */
+    public static final AngularVelocity kAngularSpeedNormal = RadiansPerSecond.of(1 * Math.PI);
+
+    /** Fast (though probably not maximum) angular (turning) speed */
+    public static final AngularVelocity kAngularSpeedFast = RadiansPerSecond.of(2 * Math.PI);
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
