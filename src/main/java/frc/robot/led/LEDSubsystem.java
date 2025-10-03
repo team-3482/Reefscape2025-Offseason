@@ -78,8 +78,8 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**
      * Forcefully sets the current color of led strip.
-     * @param newColor - The color to set. Will only be set if the priority is higher than the current one.
-     * @param forBlink - Whether the color should be blinked.
+     * @param newColor The color to set. Will only be set if the priority is higher than the current one.
+     * @param forBlink Whether the color should be blinked.
      * @see LEDSubsystem#periodic()
      */
     private void setColor(StatusColors newColor, boolean forBlink) {
@@ -122,7 +122,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**
      * Updates Dashboard and AdvantageScope logs.
-     * @param newColor - The new color to use.
+     * @param newColor The new color to use.
      */
     private void updateDashboardAndLogs(StatusColors newColor) {
         String hexString1 = newColor.color1.toHexString();
@@ -145,7 +145,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**
      * Forcefully sets the current color of led strip
-     * @param newColor - The color to set.
+     * @param newColor The color to set.
      */
     public void setColor(StatusColors newColor) {
         setColor(newColor, false);
@@ -153,7 +153,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**
      * Blinks the color every LEDConstants.BLINK_COOLDOWN
-     * @param newColor - The color to blink.
+     * @param newColor The color to blink.
      */
     public void blinkColor(StatusColors newColor) {
         setColor(newColor, true);

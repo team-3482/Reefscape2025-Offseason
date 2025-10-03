@@ -28,12 +28,12 @@ public enum StatusColors {
 
     /**
      * Creates a new StatusColors.
-     * @param color1 - The first color.
-     * @param color2 - The second color.
-     * @param brightness - How bright this color should be. If null, it will be 50%.
-     * @param priority - The priority of this color over other colors (higher = higher priority).
+     * @param color1 The first color.
+     * @param color2 The second color.
+     * @param brightness How bright this color should be. If null, it will be 50%.
+     * @param priority The priority of this color over other colors (higher = higher priority).
      * -1 will always be overridden and will always override.
-     * @param stickyTime - How long this color should stay. -1 is infinitely long.
+     * @param stickyTime How long this color should stay. -1 is infinitely long.
      */
     StatusColors(Color color1, Color color2, Dimensionless brightness, int priority, double stickyTime) {
         this.color1 = color1;
@@ -45,11 +45,11 @@ public enum StatusColors {
 
     /**
      * Creates a new StatusColors.
-     * @param color - The color.
-     * @param brightness - How bright this color should be. If null, it will be 50%.
-     * @param priority - The priority of this color over other colors (higher = higher priority).
+     * @param color The color.
+     * @param brightness How bright this color should be. If null, it will be 50%.
+     * @param priority The priority of this color over other colors (higher = higher priority).
      * -1 will always be overridden and will always override.
-     * @param stickyTime - How long this color should stay. -1 is infinitely long.
+     * @param stickyTime How long this color should stay. -1 is infinitely long.
      */
     StatusColors(Color color, Dimensionless brightness, int priority, double stickyTime) {
         this.color1 = color;
