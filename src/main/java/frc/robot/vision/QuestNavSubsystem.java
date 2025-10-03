@@ -53,7 +53,7 @@ public class QuestNavSubsystem extends SubsystemBase {
 
     /**
      * Get the latest QuestNav pose
-     * @return QuestNav Pose2d
+     * @return The QuestNav Pose2d
      */
     public Pose2d getPose() {
         if (poseFrames.length > 0) {

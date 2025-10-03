@@ -198,7 +198,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     /**
      * Helper that creates the LimelightData object for a limelight.
-     * @param limelight - The limelight to process data for.
+     * @param limelight The limelight to process data for.
      * @return The LimelightData.
      */
     private LimelightData getVisionData(String limelight) {
@@ -362,9 +362,9 @@ public class LimelightSubsystem extends SubsystemBase {
 
     /**
      * Gets the robot position according to the Limelight in target-space (the target is at the origin).
-     * @param limelight - The limelight to source the position from.
+     * @param limelight The limelight to source the position from.
      * @return The robot position.
-     * Returns an empty optional if there is no tags in view for the limelight.
+     * Returns an empty optional if there are no tags in view for the limelight.
      */
     private Optional<Pose2d> getEstimatedPosition_TargetSpace(String limelight) {
         /* [ x, z, y, pitch, yaw, roll ] (meters, degrees) */
@@ -391,7 +391,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     /**
      * Gets the primary tag in view of the limelight.
-     * @param limelight - The limelight to get the ID for.
+     * @param limelight The limelight to get the ID for.
      * @return The tag ID.
      */
     private int getPrimaryTagInView(String limelight) {
@@ -439,7 +439,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     /**
      * Converts a Pose2d to the form [x, y, yaw]. The yaw is in degrees for legibility.
-     * @param pose - The pose to process.
+     * @param pose The pose to process.
      * @return The array.
      */
     public static double[] pose2dToArray(Pose2d pose) {
