@@ -19,23 +19,18 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.littletonrobotics.junction.Logger;
 
 public class SwerveTelemetry {
     private final double MaxSpeed;
-
     /**
-     * Construct a telemetry object, with the specified max speed of the robot
+     * Construct a swerve telemetry object, with the specified max speed of the robot
      * 
      * @param maxSpeed Maximum speed in meters per second
      */
     public SwerveTelemetry(double maxSpeed) {
         MaxSpeed = maxSpeed;
         SignalLogger.start();
-
-        /* Set up the module state Mechanism2d telemetry */
-        for (int i = 0; i < 4; ++i) {
-            SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
-        }
     }
 
     /* What to publish over networktables for telemetry */
@@ -86,7 +81,7 @@ public class SwerveTelemetry {
     private final double[] m_moduleStatesArray = new double[8];
     private final double[] m_moduleTargetsArray = new double[8];
 
-    /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
+    /** Accept the swerve drive state and telemeterize it to SmartDashboard, SignalLogger, and AdvantageKit */
     public void telemeterize(SwerveDriveState state) {
         /* Telemeterize the swerve drive state */
         drivePose.set(state.Pose);
@@ -113,6 +108,12 @@ public class SwerveTelemetry {
         SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
         SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
 
+        // This could cause problems because it is not thread-safe
+        Logger.recordOutput("DriveState/Pose", m_poseArray);
+        Logger.recordOutput("DriveState/ModuleStates", m_moduleStatesArray);
+        Logger.recordOutput("DriveState/ModuleTargets", m_moduleTargetsArray);
+        Logger.recordOutput("DriveState/OdometryPeriod", state.OdometryPeriod);
+
         /* Telemeterize the pose to a Field2d */
         fieldTypePub.set("Field2d");
         fieldPub.set(m_poseArray);
@@ -122,6 +123,11 @@ public class SwerveTelemetry {
             m_moduleSpeeds[i].setAngle(state.ModuleStates[i].angle);
             m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
             m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
+
+            SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
+
+        SmartDashboard.putNumber("Robot Angle", state.Pose.getRotation().getDegrees());
+        Logger.recordOutput("DriveState/Angle", state.Pose.getRotation().getDegrees());
     }
 }
