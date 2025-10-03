@@ -33,7 +33,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     /**
      * Set the speed of the coral motor.
-     * @param speed - Speed between -1.0 and 1.0
+     * @param speed Speed between -1.0 and 1.0
      */
     public void setCoralMotor(double speed) {
         coralMotor.set(speed);
@@ -41,7 +41,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     /**
      * Set the speed of the algae motor.
-     * @param speed - Speed between -1.0 and 1.0
+     * @param speed Speed between -1.0 and 1.0
      */
     public void setAlgaeMotor(double speed) {
         algaeMotor.set(speed);
