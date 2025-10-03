@@ -9,8 +9,6 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
-import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
@@ -27,6 +25,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.constants.SwerveConstants;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -133,15 +132,15 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
             TalonFX::new,
             TalonFX::new,
             CANcoder::new,
-            TunerConstants.DrivetrainConstants,
+            SwerveConstants.DrivetrainConstants,
             0,
             VecBuilder.fill(0.03, 0.03, Units.degreesToRadians(1)),
             VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(50)),
 
-            TunerConstants.FrontLeft,
-            TunerConstants.FrontRight,
-            TunerConstants.BackLeft,
-            TunerConstants.BackRight
+            SwerveConstants.FrontLeft,
+            SwerveConstants.FrontRight,
+            SwerveConstants.BackLeft,
+            SwerveConstants.BackRight
         );
     }
 

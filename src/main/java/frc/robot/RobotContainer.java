@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.swerve.SwerveTelemetry;
-import frc.robot.swerve.TunerConstants;
+import frc.robot.constants.SwerveConstants;
 
 public class RobotContainer {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
@@ -62,7 +62,7 @@ public class RobotContainer {
     private void configureDrivetrain(){
         final SwerveSubsystem drivetrain = SwerveSubsystem.getInstance();
 
-        final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(Units.MetersPerSecond); // kSpeedAt12Volts desired top speed
+        final double MaxSpeed = SwerveConstants.kSpeedAt12Volts.in(Units.MetersPerSecond); // kSpeedAt12Volts desired top speed
         final double MaxAngularRate = Units.RotationsPerSecond.of(0.75).in(Units.RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
         /* Setting up bindings for necessary control of the swerve drive platform */
