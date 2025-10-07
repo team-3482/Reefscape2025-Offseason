@@ -10,9 +10,11 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -24,8 +26,7 @@ import frc.robot.constants.SwerveConstants;
 
 import java.util.function.Supplier;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -244,5 +245,24 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         Matrix<N3, N1> visionMeasurementStdDevs
     ) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    }
+
+    /**
+     * Finds the distance from the robot pose to another pose.
+     * @param pose - The pose to find the distance to.
+     * @return The distance.
+     */
+    public Distance getDistance(Pose2d pose) {
+        return getDistance(pose.getTranslation());
+    }
+
+    /**
+     * Finds the distance from the robot pose to a translation.
+     * @param translation - The translation to find the distance to.
+     * @return The distance.
+     */
+    public Distance getDistance(Translation2d translation) {
+        double distance = getState().Pose.getTranslation().getDistance(translation);
+        return Meters.of(distance);
     }
 }

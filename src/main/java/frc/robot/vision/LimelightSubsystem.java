@@ -4,19 +4,17 @@
 
 package frc.robot.vision;
 
-import java.util.Iterator;
-import java.util.Optional;
-
-//import com.ctre.phoenix6.Utils; // TODO swerve
-
+import com.ctre.phoenix6.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,15 +22,16 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import frc.robot.constants.VisionConstants.TagSets;
-import frc.robot.constants.VisionConstants.LimelightConstants;
-//import frc.robot.led.LEDSubsystem; // TODO led
-//import frc.robot.led.StatusColors; // TODO led
-//import frc.robot.swerve.SwerveSubsystem; // TODO led
 import frc.robot.constants.AprilTagMap;
-
+import frc.robot.constants.VisionConstants.LimelightConstants;
+import frc.robot.constants.VisionConstants.TagSets;
+import frc.robot.swerve.SwerveSubsystem;
 import org.littletonrobotics.junction.Logger;
+
+import java.util.Iterator;
+import java.util.Optional;
+
+import static edu.wpi.first.units.Units.Meters;
 
 /**
  * A class that manages AprilTag Limelights for vision.
@@ -102,14 +101,13 @@ public class LimelightSubsystem extends SubsystemBase {
         int primaryTag = getPrimaryTagInView();
         boolean reef = TagSets.REEF_TAGS.contains(primaryTag);
 
-        /* TODO swerve
         if (
             SwerveSubsystem.getInstance().getDistance(
                 AprilTagMap.getPoseFromID(primaryTag)
             ).in(Meters) >= LimelightConstants.REEF_ALIGN_RANGE
         ) {
             reef = false;
-        } */
+        }
 
         SmartDashboard.putNumberArray(
             "Primary Tag In View",
@@ -133,7 +131,6 @@ public class LimelightSubsystem extends SubsystemBase {
         LimelightData data = fetchLimelightData(); // This method gets data in about 6 to 10 ms.
         if (data.optimized || data.MegaTag == null || data.MegaTag2 == null) return;
 
-        /* TODO swerve
         if (data.canTrustRotation()) {
             // Only trust rotational data when adding this pose.
             SwerveSubsystem.getInstance().setVisionMeasurementStdDevs(VecBuilder.fill(
@@ -160,7 +157,7 @@ public class LimelightSubsystem extends SubsystemBase {
                 data.MegaTag2.pose,
                 Utils.fpgaToCurrentTime(data.MegaTag2.timestampSeconds)
             );
-        } */
+        }
 
         // This method is surprisingly efficient, generally below 1 ms.
         optimizeLimelights();
@@ -176,12 +173,10 @@ public class LimelightSubsystem extends SubsystemBase {
         long heartbeatBottomLL = -1;
 
         // Periodic logic
-        /* TODO swerve
         double rotationDegrees = SwerveSubsystem.getInstance().getState().Pose.getRotation().getDegrees();
         LimelightHelpers.SetRobotOrientation(LimelightConstants.BOTTOM_LL,
             rotationDegrees, 0, 0, 0, 0, 0
         );
-        */
 
         heartbeatBottomLL = LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.BOTTOM_LL, "hb").getInteger(-1);
 
@@ -320,7 +315,7 @@ public class LimelightSubsystem extends SubsystemBase {
                 LimelightConstants.DEFAULT_BOTTTOM_CROP[2],
                 LimelightConstants.DEFAULT_BOTTTOM_CROP[3]
             );
-        } /* else { // TODO swerve
+        } else {
             double leftCrop = limelightData.leftX / (LimelightConstants.RES_X / 2) - 1;
             double rightCrop = limelightData.rightX / (LimelightConstants.RES_X / 2) - 1;
             double bottomCrop = limelightData.bottomY / (LimelightConstants.RES_Y / 2) - 1;
@@ -347,7 +342,7 @@ public class LimelightSubsystem extends SubsystemBase {
             topCrop += LimelightConstants.BOUNDING_BOX + speedAdjustment;
 
             LimelightHelpers.setCropWindow(limelightData.name, leftCrop, rightCrop, bottomCrop, topCrop);
-        } */
+        }
     }
 
     /**

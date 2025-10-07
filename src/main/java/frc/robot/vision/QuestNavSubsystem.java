@@ -7,6 +7,7 @@ package frc.robot.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.swerve.SwerveSubsystem;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 
@@ -42,13 +43,14 @@ public class QuestNavSubsystem extends SubsystemBase {
             poseFrames = questNav.getAllUnreadPoseFrames();
 
             updateSwervePoseEstimation();
+
+            SmartDashboard.putNumber("QuestNav/Latency", questNav.getLatency());
+            SmartDashboard.putNumber("QuestNav/FramesPerRobotCycle", poseFrames.length);
+
+            Logger.recordOutput("QuestNav/Latency", questNav.getLatency());
+            Logger.recordOutput("QuestNav/FramesPerRobotCycle", poseFrames.length);
         }
 
-        SmartDashboard.putNumber("QuestNav/Latency", questNav.getLatency());
-        SmartDashboard.putNumber("QuestNav/FramesPerRobotCycle", poseFrames.length);
-
-        Logger.recordOutput("QuestNav/Latency", questNav.getLatency());
-        Logger.recordOutput("QuestNav/FramesPerRobotCycle", poseFrames.length);
     }
 
     /**
@@ -88,8 +90,7 @@ public class QuestNavSubsystem extends SubsystemBase {
             // Let's test it without filtering first and see if it's necessary.
 
             // Add the measurement to our estimator
-            // TODO swerve
-            //swerveDriveSubsystem.addVisionMeasurement(robotPose, timestamp, QuestNavConstants.TRUST_STD_DEVS);
+            SwerveSubsystem.getInstance().addVisionMeasurement(robotPose, timestamp, QuestNavConstants.TRUST_STD_DEVS);
         }
     }
 }
