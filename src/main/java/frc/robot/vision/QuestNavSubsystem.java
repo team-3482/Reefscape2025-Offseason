@@ -38,6 +38,8 @@ public class QuestNavSubsystem extends SubsystemBase {
         // Required to run here for QuestNav to work properly
         questNav.commandPeriodic();
 
+        Logger.recordOutput("QuestNav/Tracking", questNav.isTracking());
+
         if(questNav.isTracking()){
             // Get the latest pose data frames from the Quest
             poseFrames = questNav.getAllUnreadPoseFrames();

@@ -2,12 +2,16 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 
 import java.util.Set;
+
+import static edu.wpi.first.units.Units.Inches;
 
 /** Constants for vision subsystems */
 public final class VisionConstants {
@@ -92,7 +96,13 @@ public final class VisionConstants {
          * Y (positive) -> left from robot center
          * Rotation (positive) -> counter-clockwise
          */
-        public static final Transform2d ROBOT_TO_QUEST = new Transform2d(); // TODO quest offset
+        public static final Transform2d ROBOT_TO_QUEST = new Transform2d(
+            new Translation2d(
+                Inches.of(13), // TODO measure this again from the center of the bot to the lenses, not the cameras
+                Inches.of(0) // Centered
+            ),
+            new Rotation2d() // Facing forward
+        );
 
         /** Standard Deviations for Trust */
         public static final Matrix<N3, N1> TRUST_STD_DEVS = VecBuilder.fill(
