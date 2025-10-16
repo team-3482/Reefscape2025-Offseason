@@ -14,7 +14,8 @@ public class IntakeCoralCommand extends Command {
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.CORAL_INTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.MANIPULATOR_CORAL_INTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setFunnelMotor(ManipulatorConstants.FUNNEL_INTAKE_SPEED);
     }
 
     @Override
@@ -22,11 +23,14 @@ public class IntakeCoralCommand extends Command {
 
 
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        ManipulatorSubsystem.getInstance().setCoralMotor(0);
+        ManipulatorSubsystem.getInstance().setFunnelMotor(0);
+    }
 
 
     @Override
     public boolean isFinished() {
-        return false;
+        return ManipulatorSubsystem.getInstance().hasCoral();
     }
 }

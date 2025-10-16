@@ -14,7 +14,7 @@ public class IntakeAlgaeCommand extends Command {
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.ALGAE_INTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.MANIPULATOR_ALGAE_INTAKE_SPEED);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class IntakeAlgaeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.ALGAE_STALL_SPEED);
+        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.MANIPULATOR_ALGAE_STALL_SPEED);
     }
 
 

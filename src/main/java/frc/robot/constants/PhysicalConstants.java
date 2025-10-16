@@ -4,23 +4,29 @@ package frc.robot.constants;
  * For example, device IDs, speeds, ratios/multipliers, etc.
  * */
 public final class PhysicalConstants {
-    // Constants for the manipulator module (the claw thing)
+    /** Constants for the manipulator subsystem */
     public static final class ManipulatorConstants {
-        // The speed at which the coral motor will go at to intake the coral tube
-        public static final double CORAL_INTAKE_SPEED = 0;
-        // The speed at which the algae motor will go at to intake the algae ball
-        public static final double ALGAE_INTAKE_SPEED = 0;
-        // The speed at which the motors will go at to outtake the balls
-        public static final double CORAL_OUTTAKE_SPEED = 0;
-        // The speed at which the algae motor will go at to outtake the algae ball
-        public static final double ALGAE_OUTTAKE_SPEED = 0;
-        // The speed at which the algae motor will go at to hold the coral tube in place
-        public static final double ALGAE_STALL_SPEED = 0;
+        // TODO: Fill out IDs and speeds
+        /** The CAN ID for the Manipulator Coral TalonFX */
+        public static final int MANIPULATOR_CORAL_MOTOR_ID = -1;
+        /** The CAN ID for the Manipulator Algae TalonFX  */
+        public static final int MANIPULATOR_ALGAE_MOTOR_ID = -1;
+        /** The CAN ID for the Funnel (Coral) TalonFX */
+        public static final int FUNNEL_MOTOR_ID = -1;
+        /** The DIO ID for the beam break */
+        public static final int BEAM_BREAK_ID = -1;
 
-        // TODO: Fill these ids out
-        // The TalonFX motor id for the coral motor
-        public static final int CORAL_MOTOR_ID = -1;
-        // The TalonFX motor id for the algae motor
-        public static final int ALGAE_MOTOR_ID = -1;
+        /** The speed at which the Manipulator Coral motor will intake at */
+        public static final double MANIPULATOR_CORAL_INTAKE_SPEED = -0.1;
+        /** The speed at which the Manipulator Coral motor will outtake at */
+        public static final double MANIPULATOR_CORAL_OUTTAKE_SPEED = 0.1;
+        /** The speed at which the Manipulator Algae motor will intake at */
+        public static final double MANIPULATOR_ALGAE_INTAKE_SPEED = -0.1;
+        /** The speed at which the Manipulator Algae motor will outtake at */
+        public static final double MANIPULATOR_ALGAE_OUTTAKE_SPEED = 0.1;
+        /** The speed at which the Manipulator Algae motor will hold the Algae in place with */
+        public static final double MANIPULATOR_ALGAE_STALL_SPEED = -0.05;
+        /** The speed at which the Funnel (Coral) motor will intake at */
+        public static final double FUNNEL_INTAKE_SPEED = 0.1;
     }
 }

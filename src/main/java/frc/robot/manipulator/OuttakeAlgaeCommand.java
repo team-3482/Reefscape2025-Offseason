@@ -14,7 +14,7 @@ public class OuttakeAlgaeCommand extends Command {
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.ALGAE_OUTTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.MANIPULATOR_ALGAE_OUTTAKE_SPEED);
     }
 
     @Override

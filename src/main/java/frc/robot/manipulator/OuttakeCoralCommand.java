@@ -14,7 +14,7 @@ public class OuttakeCoralCommand extends Command {
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.CORAL_OUTTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.MANIPULATOR_CORAL_OUTTAKE_SPEED);
     }
 
     @Override
@@ -22,7 +22,9 @@ public class OuttakeCoralCommand extends Command {
 
 
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        ManipulatorSubsystem.getInstance().setCoralMotor(0);
+    }
 
 
     @Override
