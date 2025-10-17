@@ -5,10 +5,12 @@
 package frc.robot.manipulator;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.ManipulatorConstants;
+import frc.robot.constants.VirtualConstants.SubsystemStates;
+import org.littletonrobotics.junction.Logger;
 
 /** An example subsystem that does nothing. */
 public class ManipulatorSubsystem extends SubsystemBase {
@@ -29,10 +31,17 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     private ManipulatorSubsystem() {
         super("ManipulatorSubsystem");
+
+        ManipulatorSubsystem.getInstance().setState("Algae", SubsystemStates.IDLE);
+        ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.IDLE);
+        ManipulatorSubsystem.getInstance().setState("Funnel", SubsystemStates.IDLE);
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        Logger.recordOutput("Manipulator/hasCoral", hasCoral());
+        SmartDashboard.putBoolean("Manipulator/hasCoral", hasCoral());
+    }
 
     /**
      * Set the speed of the Manipulator Coral motor.
@@ -52,9 +61,19 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     /**
      * Set the speed of the Funnel Intake motor.
-     * @param speed
+     * @param speed Speed between -1.0 and 1.0
      */
     public void setFunnelMotor(double speed) { funnelMotor.set(speed); }
+
+    /**
+     * Logs the state of the subsystem to AdvantageKit and SmartDashboard
+     * @param subname Specific name of the part of the Manipulator (eg. Coral, Intake, Algae)
+     * @param state Current state to be logged
+     */
+    public void setState(String subname, SubsystemStates state) {
+        Logger.recordOutput("Manipulator/"+subname+"State", state);
+        SmartDashboard.putString("Manipulator/"+subname+"State", state.toString());
+    }
 
     /**
      * Get the state of the beam break.
