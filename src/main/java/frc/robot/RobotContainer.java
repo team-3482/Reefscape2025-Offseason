@@ -7,10 +7,12 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.VirtualConstants.ControllerConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.constants.VirtualConstants.ControllerConstants;
+import frc.robot.manipulator.*;
 
 public class RobotContainer {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
@@ -27,10 +29,11 @@ public class RobotContainer {
 
     // Instance of the controllers used to drive the robot
     private final CommandXboxController driverController;
-    // private final CommandXboxController operatorController;
+    private final CommandXboxController operatorController;
 
     public RobotContainer() {
         this.driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_ID);
+        this.operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_ID);
 
         // Configure the trigger bindings
         configureDriverBindings();
@@ -48,14 +51,41 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs on startup. */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
-        // ExampleSubsystem.getInstance();
+        ManipulatorSubsystem.getInstance();
     }
 
     /** Configures the button bindings of the driver controller. */
     public void configureDriverBindings() {}
 
     /** Configures the button bindings of the operator controller. */
-    public void configureOperatorBindings() {}
+    public void configureOperatorBindings() {
+        // B -> Cancel all commands
+        this.operatorController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
+
+        // Left Bumper -> Intake Coral, Right Bumper -> Outtake Coral
+        // TODO Elevator: move elevator to correct height at start of intake and end of outtake
+        // TODO Pivot: move pivot to intake at start of intake
+        this.operatorController.leftBumper().whileTrue(new IntakeCoralCommand());
+        this.operatorController.rightBumper().whileTrue(new OuttakeCoralCommand());
+
+        // Y -> Intake Algae L3, A -> Intake Algae L2
+        // TODO Elevator: move to algae L3 or L2 position
+        // TODO Pivot: move to algae position
+        this.operatorController.y().whileTrue(new IntakeAlgaeCommand());
+        this.operatorController.a().whileTrue(new IntakeAlgaeCommand());
+
+        // X -> Outtake Algae
+        // TODO: Pivot move to algae position
+        this.operatorController.x().whileTrue(new OuttakeAlgaeCommand());
+
+        // TODO Pivot
+        // Left Trigger -> Coral Scoring Position, Right Trigger -> Algae Position ?
+
+        // TODO Elevator
+        // D-PAD: Left -> L1, Down -> L2, Right -> L3, Up -> L4
+        // Double Rectangle -> Zero Elevator
+        // Burger -> Slow Elevator
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
