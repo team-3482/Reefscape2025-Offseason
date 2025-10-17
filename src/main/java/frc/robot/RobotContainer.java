@@ -16,8 +16,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.VirtualConstants.ControllerConstants;
+import frc.robot.constants.VirtualConstants.ScoringConstants;
+import frc.robot.elevator.ElevatorSubsystem;
+import frc.robot.elevator.MoveElevatorCommand;
+import frc.robot.elevator.ZeroElevatorCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.swerve.SwerveTelemetry;
+import org.littletonrobotics.junction.Logger;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -38,15 +43,13 @@ public class RobotContainer {
     // Instance of the controllers used to drive the robot
     private final CommandXboxController driverController;
     private final XboxController driverController_HID;
-    // private final CommandXboxController operatorController;
-    // private final XboxController operatorController_HID;
+    private final CommandXboxController operatorController;
 
     public RobotContainer() {
         // Initialize controllers
         this.driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_ID);
         this.driverController_HID = this.driverController.getHID();
-        // this.operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_ID);
-        // this.operatorController_HID = this.operatorController.getHID();
+        this.operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_ID);
 
         configureDrivetrain();
         initializeSubsystems();
@@ -62,7 +65,7 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs on startup. */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
-        // ExampleSubsystem.getInstance();
+        ElevatorSubsystem.getInstance();
     }
 
     /**
@@ -91,11 +94,18 @@ public class RobotContainer {
         // Drivetrain will execute this command periodically
         Drivetrain.setDefaultCommand(
             Drivetrain.applyRequest(() -> {
+                boolean elevatorTooHigh = ElevatorSubsystem.getInstance().getPosition() > ScoringConstants.SLOW_DRIVE_HEIGHT;
                 boolean topSpeed = leftTrigger.get();
                 boolean fineControl = rightTrigger.get();
 
-                double linearSpeed = topSpeed && !fineControl ? MaxSpeed : NormalSpeed;
-                double angularSpeed = topSpeed && !fineControl ? FastAngularSpeed : NormalAngularSpeed;
+                double linearSpeed = elevatorTooHigh
+                    ? (SwerveConstants.kElevatorTooHighSpeed.in(Units.MetersPerSecond))
+                    : (topSpeed ? MaxSpeed : NormalSpeed);
+
+                Logger.recordOutput("DriveState/MaxSpeed", linearSpeed);
+                SmartDashboard.putNumber("DriveState/MaxSpeed", linearSpeed);
+
+                double angularSpeed = topSpeed ? NormalAngularSpeed : FastAngularSpeed;
 
                 double fineControlMult = fineControl ? ControllerConstants.FINE_CONTROL_MULT : 1;
 
@@ -128,7 +138,7 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
         if (ControllerConstants.DPAD_DRIVE_INPUT) {
-            /** POV angle : [X velocity, Y velocity] in m/s */
+            /* POV angle : [X velocity, Y velocity] in m/s */
             final Map<Integer, Integer[]> povSpeeds = Map.ofEntries(
                 Map.entry(  0, new Integer[]{ 1,  0}),
                 Map.entry( 45, new Integer[]{ 1, -1}),
@@ -170,7 +180,24 @@ public class RobotContainer {
     }
 
     /** Configures the button bindings of the operator controller. */
-    public void configureOperatorBindings() {}
+    public void configureOperatorBindings() {
+        this.operatorController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
+
+        // D-PAD: Left -> L1, Down -> L2, Right -> L3, Up -> L4
+        Supplier<Boolean> slowElevatorSupplier = () -> this.operatorController.getHID().getRightTriggerAxis() >= 0.5;
+
+        this.operatorController.povLeft()
+            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L1_CORAL, slowElevatorSupplier, true));
+        this.operatorController.povDown()
+            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L2_CORAL, slowElevatorSupplier, true));
+        this.operatorController.povRight()
+            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L3_CORAL, slowElevatorSupplier, true));
+        this.operatorController.povUp()
+            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L4_CORAL, slowElevatorSupplier, true));
+
+        // Double Rectangle -> Zero Elevator
+        this.operatorController.back().onTrue(new ZeroElevatorCommand());
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
