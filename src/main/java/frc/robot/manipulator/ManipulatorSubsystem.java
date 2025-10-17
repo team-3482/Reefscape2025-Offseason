@@ -12,6 +12,8 @@ import frc.robot.constants.PhysicalConstants.ManipulatorConstants;
 import frc.robot.constants.VirtualConstants.SubsystemStates;
 import org.littletonrobotics.junction.Logger;
 
+import static frc.robot.constants.PhysicalConstants.RobotConstants.CAN_BUS;
+
 /** An example subsystem that does nothing. */
 public class ManipulatorSubsystem extends SubsystemBase {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
@@ -24,9 +26,9 @@ public class ManipulatorSubsystem extends SubsystemBase {
         return ManipulatorSubsystemHolder.INSTANCE;
     }
 
-    private TalonFX coralMotor = new TalonFX(ManipulatorConstants.MANIPULATOR_CORAL_MOTOR_ID);
-    private TalonFX algaeMotor = new TalonFX(ManipulatorConstants.MANIPULATOR_ALGAE_MOTOR_ID);
-    private TalonFX funnelMotor = new TalonFX(ManipulatorConstants.FUNNEL_MOTOR_ID);
+    private TalonFX coralMotor = new TalonFX(ManipulatorConstants.MANIPULATOR_CORAL_MOTOR_ID, CAN_BUS);
+    private TalonFX algaeMotor = new TalonFX(ManipulatorConstants.MANIPULATOR_ALGAE_MOTOR_ID, CAN_BUS);
+    private TalonFX funnelMotor = new TalonFX(ManipulatorConstants.FUNNEL_MOTOR_ID, CAN_BUS);
     private DigitalInput beamBreak = new DigitalInput(ManipulatorConstants.BEAM_BREAK_ID);
 
     private ManipulatorSubsystem() {
