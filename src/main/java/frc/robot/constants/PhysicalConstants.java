@@ -14,9 +14,9 @@ public final class PhysicalConstants {
 
     public static final class ElevatorConstants {
         /** The CAN ID for the Left Elevator TalonFX */
-        public static final int LEFT_MOTOR_ID = -1;
+        public static final int LEFT_MOTOR_ID = 20;
         /** The CAN ID for the Right Elevator TalonFX */
-        public static final int RIGHT_MOTOR_ID = -1;
+        public static final int RIGHT_MOTOR_ID = 21;
 
         /**
          * The diameter of the bar that the string wraps around on the elevator
@@ -47,5 +47,11 @@ public final class PhysicalConstants {
             public static final double kI = 0;
             public static final double kD = 0;
         }
+
+        /** The voltage to run the motors at to zero the elevator */
+        public static final double zeroElevatorVoltage = 2;
+
+        /** Elevator Motor Stator Current Limit */
+        public static final double statorCurrentLimit = 80;
     }
 }

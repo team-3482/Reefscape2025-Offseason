@@ -40,10 +40,10 @@ public final class VirtualConstants {
         public static final double L4_CORAL = 0.74; // placeholder
 
         public static final double BOTTOM_HEIGHT = 0;
-        public static final double MAX_HEIGHT = 0.75;
+        public static final double MAX_HEIGHT = 1.15;
 
         public static final double SLOW_DRIVE_HEIGHT = 0.4;
-        public static final double INTAKING_HEIGHT = 0.1;
+        public static final double INTAKING_HEIGHT = 0;
         public static final double IDLE_HEIGHT = L2_ALGAE;
     }
 }

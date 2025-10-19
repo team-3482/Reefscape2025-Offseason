@@ -65,6 +65,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if(getPosition() < 0) { setPosition(0); }
+
         double position = getPosition();
         double rotorVelocity = getRotorVelocity();
 
@@ -190,7 +192,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         CurrentLimitsConfigs currentLimitsConfigs = configuration.CurrentLimits;
         currentLimitsConfigs.StatorCurrentLimitEnable = true;
-        currentLimitsConfigs.StatorCurrentLimit = 80;
+        currentLimitsConfigs.StatorCurrentLimit = ElevatorConstants.statorCurrentLimit;
         currentLimitsConfigs.SupplyCurrentLimitEnable = true;
         currentLimitsConfigs.SupplyCurrentLimit = 15;
         currentLimitsConfigs.SupplyCurrentLowerTime = 0.5;
@@ -292,6 +294,10 @@ public class ElevatorSubsystem extends SubsystemBase {
      */
     public double getLastSetGoal() {
         return this.lastSetGoal;
+    }
+
+    public double getStatorCurrent() {
+        return rightMotor.getStatorCurrent().getValueAsDouble();
     }
 
     /**
