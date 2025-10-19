@@ -31,16 +31,15 @@ public final class VirtualConstants {
     public static final class ScoringConstants {
         // TODO update these values with the new elevator
         /* Heights in elevator meters for scoring at these heights. */
-        public static final double L2_ALGAE = 0.08;
-        public static final double L3_ALGAE = 0.48;
+        public static final double L2_ALGAE = 0.05;
+        public static final double L3_ALGAE = 0.32;
 
-        public static final double L1_CORAL = 0.235;
-        public static final double L2_CORAL = 0.34;
-        public static final double L3_CORAL = 0.74;
-        public static final double L4_CORAL = 0.74; // placeholder
+        public static final double L1_CORAL = 0.157;
+        public static final double L2_CORAL = 0.23;
+        public static final double L3_CORAL = 0.49;
+        public static final double L4_CORAL = 0.76; // placeholder
 
-        public static final double BOTTOM_HEIGHT = 0;
-        public static final double MAX_HEIGHT = 1.15;
+        public static final double MAX_HEIGHT = 0.77;
 
         public static final double SLOW_DRIVE_HEIGHT = 0.4;
         public static final double INTAKING_HEIGHT = 0;

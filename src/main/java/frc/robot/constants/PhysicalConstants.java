@@ -31,7 +31,7 @@ public final class PhysicalConstants {
         public static final double HEIGHT_TOLERANCE = 0.05;
 
         /* Motion Magic Config */
-        public static final double ROTOR_TO_MECHANISM_RATIO = (double) 36 / 18;
+        public static final double ROTOR_TO_MECHANISM_RATIO = 3; // 36:12, 3:1
         public static final double CRUISE_SPEED = 30;
         public static final double SLOW_CRUISE_SPEED = 10;
         public static final double ACCELERATION = 60;
