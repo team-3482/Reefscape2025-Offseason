@@ -37,12 +37,12 @@ public final class VirtualConstants {
         public static final double L1_CORAL = 0.157;
         public static final double L2_CORAL = 0.23;
         public static final double L3_CORAL = 0.49;
-        public static final double L4_CORAL = 0.76; // placeholder
+        public static final double L4_CORAL = 0.78; // placeholder
 
-        public static final double MAX_HEIGHT = 0.77;
+        public static final double MAX_HEIGHT = 0.78;
 
         public static final double SLOW_DRIVE_HEIGHT = 0.4;
-        public static final double INTAKING_HEIGHT = 0;
-        public static final double IDLE_HEIGHT = L2_ALGAE;
+        public static final double INTAKING_HEIGHT = -0.02; // this offset makes sure it actually goes to zero, something is off here
+        public static final double IDLE_HEIGHT = INTAKING_HEIGHT;
     }
 }

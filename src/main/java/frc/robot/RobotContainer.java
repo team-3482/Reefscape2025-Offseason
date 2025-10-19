@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,6 +28,8 @@ import org.littletonrobotics.junction.Logger;
 
 import java.util.Map;
 import java.util.function.Supplier;
+
+import static frc.robot.constants.PhysicalConstants.RobotConstants.CAN_BUS;
 
 public class RobotContainer {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
@@ -65,7 +69,12 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs on startup. */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
-        ElevatorSubsystem.getInstance();
+        // TODO get rid of this after tuning elevator
+        // ElevatorSubsystem.getInstance();
+        TalonFX left = new TalonFX(20, CAN_BUS);
+        TalonFX right = new TalonFX(21, CAN_BUS);
+
+        left.setControl(new Follower(20, true));
     }
 
     /**
@@ -194,6 +203,12 @@ public class RobotContainer {
             .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L3_CORAL, slowElevatorSupplier, true));
         this.operatorController.povUp()
             .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L4_CORAL, slowElevatorSupplier, true));
+
+        // A -> L2 Algae, Y -> L3 Algae
+        this.operatorController.y()
+            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L2_ALGAE, slowElevatorSupplier, true));
+        this.operatorController.a()
+            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L3_ALGAE, slowElevatorSupplier, true));
 
         // Double Rectangle -> Zero Elevator
         this.operatorController.back().onTrue(new ZeroElevatorCommand());

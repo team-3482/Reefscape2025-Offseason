@@ -65,8 +65,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(getPosition() < 0) { setPosition(0); }
-
         double position = getPosition();
         double rotorVelocity = getRotorVelocity();
 
@@ -188,7 +186,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         MotionMagicConfigs motionMagicConfigs = configuration.MotionMagic;
         motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_SPEED;
         motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.ACCELERATION;
-        // motionMagicConfigs.MotionMagicJerk = PivotConstants.MOTION_MAGIC_JERK;
 
         CurrentLimitsConfigs currentLimitsConfigs = configuration.CurrentLimits;
         currentLimitsConfigs.StatorCurrentLimitEnable = true;

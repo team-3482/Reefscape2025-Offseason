@@ -31,7 +31,7 @@ public class ZeroElevatorCommand extends Command {
     public void end(boolean interrupted) {
         ElevatorSubsystem.getInstance().setVoltage(0);
         if (!interrupted) {
-            ElevatorSubsystem.getInstance().setPosition(ScoringConstants.INTAKING_HEIGHT);
+            ElevatorSubsystem.getInstance().setPosition(ScoringConstants.IDLE_HEIGHT);
         }
         // LEDSubsystem.getInstance().setColor(interrupted ? StatusColors.ERROR : StatusColors.OK);
     }

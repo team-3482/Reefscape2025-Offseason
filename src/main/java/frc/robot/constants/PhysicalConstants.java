@@ -39,11 +39,11 @@ public final class PhysicalConstants {
 
         /** Gains used for Motion Magic slot 0. */
         public static final class ElevatorSlot0Gains {
-            public static final double kG = 0;
+            public static final double kG = 0.37;
             public static final double kS = 0;
             public static final double kV = 0;
             public static final double kA = 0;
-            public static final double kP = 1;
+            public static final double kP = 2;
             public static final double kI = 0;
             public static final double kD = 0;
         }
