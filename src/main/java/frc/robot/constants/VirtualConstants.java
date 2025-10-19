@@ -28,9 +28,8 @@ public final class VirtualConstants {
     }
 
     /** Constants for elevator heights */
-    public static final class ScoringConstants {
+    public static final class ElevatorPositions {
         // TODO update these values with the new elevator
-        /* Heights in elevator meters for scoring at these heights. */
         public static final double L2_ALGAE = 0.05;
         public static final double L3_ALGAE = 0.32;
 
@@ -44,5 +43,13 @@ public final class VirtualConstants {
         public static final double SLOW_DRIVE_HEIGHT = 0.4;
         public static final double INTAKING_HEIGHT = -0.02; // this offset makes sure it actually goes to zero, something is off here
         public static final double IDLE_HEIGHT = INTAKING_HEIGHT;
+    }
+
+    public static final class PivotPositions {
+        // TODO these values are made up and not accurate yet
+        public static final double CORAL = 180;
+        public static final double L4_CORAL = 120;
+        public static final double ALGAE = 90;
+        public static final double INTAKE = 0;
     }
 }

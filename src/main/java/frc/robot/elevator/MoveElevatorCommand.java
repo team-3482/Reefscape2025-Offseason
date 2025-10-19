@@ -1,8 +1,7 @@
 package frc.robot.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
-import frc.robot.constants.VirtualConstants.ScoringConstants;
+import frc.robot.constants.VirtualConstants.ElevatorPositions;
 
 import java.util.function.Supplier;
 
@@ -56,7 +55,7 @@ public class MoveElevatorCommand extends Command {
     public void end(boolean interrupted) {
         if (this.returnToIdle) {
             ElevatorSubsystem.getInstance().motionMagicPosition(
-                ScoringConstants.IDLE_HEIGHT, true, this.slowSupplier.get()
+                ElevatorPositions.IDLE_HEIGHT, true, this.slowSupplier.get()
             );
         }
     }

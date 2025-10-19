@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,18 +16,20 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.VirtualConstants.ControllerConstants;
-import frc.robot.constants.VirtualConstants.ScoringConstants;
+import frc.robot.constants.VirtualConstants.ElevatorPositions;
+import frc.robot.constants.VirtualConstants.PivotPositions;
 import frc.robot.elevator.ElevatorSubsystem;
 import frc.robot.elevator.MoveElevatorCommand;
 import frc.robot.elevator.ZeroElevatorCommand;
+import frc.robot.pivot.MovePivotCommand;
+import frc.robot.pivot.PivotSubsystem;
+import frc.robot.pivot.ZeroPivotCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.swerve.SwerveTelemetry;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static frc.robot.constants.PhysicalConstants.RobotConstants.CAN_BUS;
 
 public class RobotContainer {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
@@ -69,12 +69,8 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs on startup. */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
-        // TODO get rid of this after tuning elevator
-        // ElevatorSubsystem.getInstance();
-        TalonFX left = new TalonFX(20, CAN_BUS);
-        TalonFX right = new TalonFX(21, CAN_BUS);
-
-        left.setControl(new Follower(20, true));
+        ElevatorSubsystem.getInstance();
+        PivotSubsystem.getInstance();
     }
 
     /**
@@ -103,7 +99,7 @@ public class RobotContainer {
         // Drivetrain will execute this command periodically
         Drivetrain.setDefaultCommand(
             Drivetrain.applyRequest(() -> {
-                boolean elevatorTooHigh = ElevatorSubsystem.getInstance().getPosition() > ScoringConstants.SLOW_DRIVE_HEIGHT;
+                boolean elevatorTooHigh = ElevatorSubsystem.getInstance().getPosition() > ElevatorPositions.SLOW_DRIVE_HEIGHT;
                 boolean topSpeed = leftTrigger.get();
                 boolean fineControl = rightTrigger.get();
 
@@ -196,22 +192,29 @@ public class RobotContainer {
         Supplier<Boolean> slowElevatorSupplier = () -> this.operatorController.getHID().getRightTriggerAxis() >= 0.5;
 
         this.operatorController.povLeft()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L1_CORAL, slowElevatorSupplier, true));
+            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L1_CORAL, slowElevatorSupplier, true));
         this.operatorController.povDown()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L2_CORAL, slowElevatorSupplier, true));
+            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L2_CORAL, slowElevatorSupplier, true));
         this.operatorController.povRight()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L3_CORAL, slowElevatorSupplier, true));
+            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L3_CORAL, slowElevatorSupplier, true));
         this.operatorController.povUp()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L4_CORAL, slowElevatorSupplier, true));
+            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L4_CORAL, slowElevatorSupplier, true));
 
         // A -> L2 Algae, Y -> L3 Algae
+        // this.operatorController.y()
+        //     .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L2_ALGAE, slowElevatorSupplier, true));
+        // this.operatorController.a()
+        //     .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L3_ALGAE, slowElevatorSupplier, true));
+
         this.operatorController.y()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L2_ALGAE, slowElevatorSupplier, true));
+            .toggleOnTrue(new MovePivotCommand(PivotPositions.CORAL));
         this.operatorController.a()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L3_ALGAE, slowElevatorSupplier, true));
+            .toggleOnTrue(new MovePivotCommand(PivotPositions.ALGAE));
 
         // Double Rectangle -> Zero Elevator
         this.operatorController.back().onTrue(new ZeroElevatorCommand());
+        // Burger -> Zero Pivot
+        this.operatorController.start().onTrue(new ZeroPivotCommand());
     }
 
     /**

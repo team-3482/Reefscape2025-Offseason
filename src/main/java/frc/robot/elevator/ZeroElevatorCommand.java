@@ -3,12 +3,10 @@ package frc.robot.elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
-import frc.robot.constants.VirtualConstants.ScoringConstants;
+import frc.robot.constants.VirtualConstants.ElevatorPositions;
 
 /** A command that pushes the elevator down to the hardstop to zero it */
 public class ZeroElevatorCommand extends Command {
-    double lastRotorVelocity;
-
     /** Creates a new ZeroElevatorCommand. */
     public ZeroElevatorCommand() {
         setName("ZeroElevatorCommand");
@@ -19,7 +17,7 @@ public class ZeroElevatorCommand extends Command {
 
     @Override
     public void initialize() {
-        ElevatorSubsystem.getInstance().setVoltage(-ElevatorConstants.zeroElevatorVoltage);
+        ElevatorSubsystem.getInstance().setVoltage(-ElevatorConstants.ZERO_ELEVATOR_VOLTAGE);
     }
 
 
@@ -31,7 +29,7 @@ public class ZeroElevatorCommand extends Command {
     public void end(boolean interrupted) {
         ElevatorSubsystem.getInstance().setVoltage(0);
         if (!interrupted) {
-            ElevatorSubsystem.getInstance().setPosition(ScoringConstants.IDLE_HEIGHT);
+            ElevatorSubsystem.getInstance().setPosition(ElevatorPositions.IDLE_HEIGHT);
         }
         // LEDSubsystem.getInstance().setColor(interrupted ? StatusColors.ERROR : StatusColors.OK);
     }
@@ -39,6 +37,6 @@ public class ZeroElevatorCommand extends Command {
     @Override
     public boolean isFinished() {
         return ElevatorSubsystem.getInstance().getRotorVelocity() == 0
-            && ElevatorSubsystem.getInstance().getStatorCurrent() >= ElevatorConstants.statorCurrentLimit;
+            && ElevatorSubsystem.getInstance().getStatorCurrent() >= ElevatorConstants.STATOR_CURRENT_LIMIT;
     }
 }
