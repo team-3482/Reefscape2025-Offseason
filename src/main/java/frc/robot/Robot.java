@@ -13,8 +13,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.VirtualConstants;
-import frc.robot.utilities.Elastic;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -91,7 +89,7 @@ public class Robot extends LoggedRobot {
             System.err.println("No auton command found.");
         }
 
-        Elastic.selectTab(VirtualConstants.DashboardTabNames.AUTON);
+        // Elastic.selectTab(VirtualConstants.DashboardTabNames.AUTON); // this lags the bot after enabling so it's commented out
     }
 
     @Override
@@ -103,7 +101,7 @@ public class Robot extends LoggedRobot {
             this.auton.cancel();
         }
 
-        Elastic.selectTab(VirtualConstants.DashboardTabNames.TELEOP);
+        // Elastic.selectTab(VirtualConstants.DashboardTabNames.TELEOP);
     }
 
     @Override
