@@ -37,6 +37,8 @@ public class IntakeCoralCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return
+            ManipulatorSubsystem.getInstance().getCoralRotorVelocity() == 0 &&
+            ManipulatorSubsystem.getInstance().getCoralStatorCurrent() >= ManipulatorConstants.CORAL_CURRENT_LIMIT;
     }
 }

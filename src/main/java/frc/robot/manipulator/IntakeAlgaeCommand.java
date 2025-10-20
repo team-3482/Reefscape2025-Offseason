@@ -33,6 +33,8 @@ public class IntakeAlgaeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return
+            ManipulatorSubsystem.getInstance().getAlgaeRotorVelocity() == 0 &&
+            ManipulatorSubsystem.getInstance().getAlgaeStatorCurrent() >= ManipulatorConstants.ALGAE_CURRENT_LIMIT;
     }
 }

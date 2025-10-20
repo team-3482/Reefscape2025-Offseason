@@ -4,6 +4,7 @@
 
 package frc.robot.manipulator;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,6 +37,15 @@ public class ManipulatorSubsystem extends SubsystemBase {
         ManipulatorSubsystem.getInstance().setState("Algae", SubsystemStates.IDLE);
         ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.IDLE);
         ManipulatorSubsystem.getInstance().setState("Funnel", SubsystemStates.IDLE);
+
+        CurrentLimitsConfigs limitConfigs = new CurrentLimitsConfigs();
+        limitConfigs.StatorCurrentLimitEnable = true;
+
+        limitConfigs.StatorCurrentLimit = ManipulatorConstants.CORAL_CURRENT_LIMIT;
+        coralMotor.getConfigurator().apply(limitConfigs);
+
+        limitConfigs.StatorCurrentLimit = ManipulatorConstants.ALGAE_CURRENT_LIMIT;
+        algaeMotor.getConfigurator().apply(limitConfigs);
     }
 
     @Override
@@ -77,7 +87,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
      * Gets the active stator current of the Coral motor.
      * @return Current in Amps
      */
-    public double getCoralStatorCurrent(){
+    public double getCoralStatorCurrent() {
         return coralMotor.getStatorCurrent().getValueAsDouble();
     }
 
@@ -85,7 +95,23 @@ public class ManipulatorSubsystem extends SubsystemBase {
      * Gets the active stator current of the Algae motor.
      * @return Current in Amps
      */
-    public double getAlgaeStatorCurrent(){
+    public double getAlgaeStatorCurrent() {
         return algaeMotor.getStatorCurrent().getValueAsDouble();
+    }
+
+    /**
+     * Gets the active rotor velocity of the Coral motor.
+     * @return the velocity
+     */
+    public double getCoralRotorVelocity() {
+        return coralMotor.getRotorVelocity().getValueAsDouble();
+    }
+
+    /**
+     * Gets the active rotor velocity of the Coral motor.
+     * @return the velocity
+     */
+    public double getAlgaeRotorVelocity() {
+        return algaeMotor.getRotorVelocity().getValueAsDouble();
     }
 }

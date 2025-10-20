@@ -65,13 +65,13 @@ public class RobotContainer {
         // Left Bumper -> Intake Coral, Right Bumper -> Outtake Coral
         // TODO Elevator: move elevator to correct height at start of intake and end of outtake
         // TODO Pivot: move pivot to intake at start of intake
-        this.operatorController.leftBumper().whileTrue(new IntakeCoralCommand());
+        this.operatorController.leftBumper().toggleOnTrue(new IntakeCoralCommand());
         this.operatorController.rightBumper().whileTrue(new OuttakeCoralCommand());
 
         // Y -> Intake Algae L3, A -> Intake Algae L2
         // TODO Elevator: move to algae L3 or L2 position
         // TODO Pivot: move to algae position
-        this.operatorController.y().whileTrue(new IntakeAlgaeCommand());
+        this.operatorController.y().toggleOnTrue(new IntakeAlgaeCommand());
         this.operatorController.a().whileTrue(new IntakeAlgaeCommand());
 
         // X -> Outtake Algae

@@ -13,7 +13,7 @@ public final class PhysicalConstants {
 
     /** Constants for the manipulator subsystem */
     public static final class ManipulatorConstants {
-        // TODO: Fill out speeds
+        // TODO: Fill out speeds and current limits
         /** The CAN ID for the Manipulator Coral TalonFX */
         public static final int CORAL_MOTOR_ID = 23;
         /** The CAN ID for the Manipulator Algae TalonFX  */
@@ -33,5 +33,10 @@ public final class PhysicalConstants {
         public static final double ALGAE_HOLD_SPEED = 0.05;
         /** The speed at which the Funnel (Coral) motor will intake at */
         public static final double FUNNEL_INTAKE_SPEED = 0.1;
+
+        /** The current limit for the Manipulator Coral motor */
+        public static final double CORAL_CURRENT_LIMIT = 20;
+        /** The current limit for the Manipulator Algae motor */
+        public static final double ALGAE_CURRENT_LIMIT = 20;
     }
 }
