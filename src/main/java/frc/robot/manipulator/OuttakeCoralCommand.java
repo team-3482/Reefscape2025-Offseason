@@ -8,14 +8,13 @@ import frc.robot.constants.VirtualConstants.SubsystemStates;
 public class OuttakeCoralCommand extends Command {
     public OuttakeCoralCommand() {
         setName("OuttakeCoralCommand");
-        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ManipulatorSubsystem.getInstance());
     }
 
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.MANIPULATOR_CORAL_OUTTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setCoralMotor(-ManipulatorConstants.CORAL_OUTTAKE_SPEED);
 
         ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.OUTTAKING);
     }

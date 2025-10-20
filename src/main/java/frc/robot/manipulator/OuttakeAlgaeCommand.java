@@ -8,14 +8,13 @@ import frc.robot.constants.VirtualConstants.SubsystemStates;
 public class OuttakeAlgaeCommand extends Command {
     public OuttakeAlgaeCommand() {
         setName("OuttakeAlgaeCommand");
-        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ManipulatorSubsystem.getInstance());
     }
 
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.MANIPULATOR_ALGAE_OUTTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.ALGAE_OUTTAKE_SPEED);
 
         ManipulatorSubsystem.getInstance().setState("Algae", SubsystemStates.OUTTAKING);
     }

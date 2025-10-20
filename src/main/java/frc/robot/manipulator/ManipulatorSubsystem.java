@@ -26,10 +26,9 @@ public class ManipulatorSubsystem extends SubsystemBase {
         return ManipulatorSubsystemHolder.INSTANCE;
     }
 
-    private TalonFX coralMotor = new TalonFX(ManipulatorConstants.MANIPULATOR_CORAL_MOTOR_ID, CAN_BUS);
-    private TalonFX algaeMotor = new TalonFX(ManipulatorConstants.MANIPULATOR_ALGAE_MOTOR_ID, CAN_BUS);
+    private TalonFX coralMotor = new TalonFX(ManipulatorConstants.CORAL_MOTOR_ID, CAN_BUS);
+    private TalonFX algaeMotor = new TalonFX(ManipulatorConstants.ALGAE_MOTOR_ID, CAN_BUS);
     private TalonFX funnelMotor = new TalonFX(ManipulatorConstants.FUNNEL_MOTOR_ID, CAN_BUS);
-    private DigitalInput beamBreak = new DigitalInput(ManipulatorConstants.BEAM_BREAK_ID);
 
     private ManipulatorSubsystem() {
         super("ManipulatorSubsystem");
@@ -40,10 +39,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-        Logger.recordOutput("Manipulator/hasCoral", hasCoral());
-        SmartDashboard.putBoolean("Manipulator/hasCoral", hasCoral());
-    }
+    public void periodic() {}
 
     /**
      * Set the speed of the Manipulator Coral motor.
@@ -78,8 +74,18 @@ public class ManipulatorSubsystem extends SubsystemBase {
     }
 
     /**
-     * Get the state of the beam break.
-     * @return true if Coral in the way
+     * Gets the active stator current of the Coral motor.
+     * @return Current in Amps
      */
-    public boolean hasCoral() { return beamBreak.get(); }
+    public double getCoralStatorCurrent(){
+        return coralMotor.getStatorCurrent().getValueAsDouble();
+    }
+
+    /**
+     * Gets the active stator current of the Algae motor.
+     * @return Current in Amps
+     */
+    public double getAlgaeStatorCurrent(){
+        return algaeMotor.getStatorCurrent().getValueAsDouble();
+    }
 }

@@ -8,14 +8,13 @@ import frc.robot.constants.VirtualConstants.SubsystemStates;
 public class IntakeAlgaeCommand extends Command {
     public IntakeAlgaeCommand() {
         setName("IntakeAlgaeCommand");
-        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ManipulatorSubsystem.getInstance());
     }
 
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.MANIPULATOR_ALGAE_INTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setAlgaeMotor(-ManipulatorConstants.ALGAE_INTAKE_SPEED);
 
         ManipulatorSubsystem.getInstance().setState("Algae", SubsystemStates.INTAKING);
     }
@@ -26,7 +25,7 @@ public class IntakeAlgaeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        ManipulatorSubsystem.getInstance().setAlgaeMotor(ManipulatorConstants.MANIPULATOR_ALGAE_STALL_SPEED);
+        ManipulatorSubsystem.getInstance().setAlgaeMotor(-ManipulatorConstants.ALGAE_HOLD_SPEED);
 
         ManipulatorSubsystem.getInstance().setState("Algae", SubsystemStates.HOLDING);
     }

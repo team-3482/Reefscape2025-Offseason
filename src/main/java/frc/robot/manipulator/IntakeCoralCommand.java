@@ -8,14 +8,13 @@ import frc.robot.constants.VirtualConstants.SubsystemStates;
 public class IntakeCoralCommand extends Command {
     public IntakeCoralCommand() {
         setName("IntakeCoralCommand");
-        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ManipulatorSubsystem.getInstance());
     }
 
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.MANIPULATOR_CORAL_INTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.CORAL_INTAKE_SPEED);
         ManipulatorSubsystem.getInstance().setFunnelMotor(ManipulatorConstants.FUNNEL_INTAKE_SPEED);
 
         ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.INTAKING);
@@ -38,6 +37,6 @@ public class IntakeCoralCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return ManipulatorSubsystem.getInstance().hasCoral();
+        return false;
     }
 }
