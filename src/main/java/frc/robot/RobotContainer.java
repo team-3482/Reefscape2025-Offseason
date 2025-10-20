@@ -179,36 +179,61 @@ public class RobotContainer {
     }
 
     /** Configures the button bindings of the driver controller. */
-    public void configureDriverBindings() {}
+    public void configureDriverBindings() {
+        // Double Rectangle
+        this.driverController.back().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetPose(Pose2d.kZero)));
+        // Burger
+        this.driverController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().seedFieldCentric()));
+    }
 
     /** Configures the button bindings of the operator controller. */
     public void configureOperatorBindings() {
         // B -> Cancel all commands
         this.operatorController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
 
-        // Left Bumper -> Intake Coral, Right Bumper -> Outtake Coral
-        // TODO Elevator: move elevator to correct height at start of intake and end of outtake
-        // TODO Pivot: move pivot to intake at start of intake
-        this.operatorController.leftBumper().toggleOnTrue(new IntakeCoralCommand());
-        this.operatorController.rightBumper().whileTrue(new OuttakeCoralCommand());
+        // D-PAD: Left -> L1, Down -> L2, Right -> L3, Up -> L4
+        Supplier<Boolean> slowElevatorSupplier = () -> this.operatorController.getHID().getRightTriggerAxis() >= 0.5;
 
-        // Y -> Intake Algae L3, A -> Intake Algae L2
-        // TODO Elevator: move to algae L3 or L2 position
-        // TODO Pivot: move to algae position
-        this.operatorController.y().toggleOnTrue(new IntakeAlgaeCommand());
-        this.operatorController.a().whileTrue(new IntakeAlgaeCommand());
+        this.operatorController.povLeft()
+            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L1_CORAL, slowElevatorSupplier, true));
+        this.operatorController.povDown()
+            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L2_CORAL, slowElevatorSupplier, true));
+        this.operatorController.povRight()
+            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L3_CORAL, slowElevatorSupplier, true));
+        this.operatorController.povUp()
+            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L4_CORAL, slowElevatorSupplier, true));
+
+        // Left Bumper -> Intake Coral
+        this.operatorController.leftBumper().onTrue(Commands.parallel(
+            new MovePivotCommand(PivotPositions.INTAKE),
+            new MoveElevatorCommand(ElevatorPositions.INTAKING_HEIGHT, slowElevatorSupplier, true)
+        )).toggleOnTrue(new IntakeCoralCommand());
+
+        //Right Bumper -> Outtake Coral
+        this.operatorController.rightBumper()
+            .onTrue(new MovePivotCommand(PivotPositions.INTAKE))
+            .whileTrue(new OuttakeCoralCommand());
+
+        // A -> Intake L2 Algae, Y -> Intake L3 Algae
+        this.operatorController.a().onTrue(Commands.parallel(
+            new MovePivotCommand(PivotPositions.ALGAE),
+            new MoveElevatorCommand(ElevatorPositions.L2_ALGAE, slowElevatorSupplier, true)
+        )).toggleOnTrue(new IntakeAlgaeCommand());
+
+        this.operatorController.y().onTrue(Commands.parallel(
+            new MovePivotCommand(PivotPositions.ALGAE),
+            new MoveElevatorCommand(ElevatorPositions.L3_ALGAE, slowElevatorSupplier, true)
+        )).toggleOnTrue(new IntakeAlgaeCommand());
 
         // X -> Outtake Algae
-        // TODO: Pivot move to algae position
-        this.operatorController.x().whileTrue(new OuttakeAlgaeCommand());
+        this.operatorController.x()
+            .onTrue(new MovePivotCommand(PivotPositions.ALGAE))
+            .whileTrue(new OuttakeAlgaeCommand());
 
-        // TODO Pivot
-        // Left Trigger -> Coral Scoring Position, Right Trigger -> Algae Position ?
-
-        // TODO Elevator
-        // D-PAD: Left -> L1, Down -> L2, Right -> L3, Up -> L4
         // Double Rectangle -> Zero Elevator
-        // Burger -> Slow Elevator
+        this.operatorController.back().onTrue(new ZeroElevatorCommand());
+        // Burger -> Zero Pivot
+        this.operatorController.start().onTrue(new ZeroPivotCommand());
     }
 
     /**
