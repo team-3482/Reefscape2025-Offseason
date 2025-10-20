@@ -34,6 +34,14 @@ public final class VirtualConstants {
         HOLDING
     }
 
+    public static enum PivotPositionNames {
+        INTAKE,
+        CORAL,
+        L4_CORAL,
+        ALGAE,
+        ELEVATING
+    }
+
     /** Constants for elevator heights */
     public static final class ElevatorPositions {
         // TODO update these values with the new elevator
@@ -50,6 +58,7 @@ public final class VirtualConstants {
         public static final double SLOW_DRIVE_HEIGHT = 0.4;
         public static final double INTAKING_HEIGHT = -0.02; // this offset makes sure it actually goes to zero, something is off here
         public static final double IDLE_HEIGHT = INTAKING_HEIGHT;
+        public static final double SAFE_PIVOT_HEIGHT = 0.35;
     }
 
     public static final class PivotPositions {
@@ -58,5 +67,6 @@ public final class VirtualConstants {
         public static final double L4_CORAL = 120;
         public static final double ALGAE = 90;
         public static final double INTAKE = 0;
+        public static final double ELEVATING = ALGAE;
     }
 }

@@ -2,7 +2,12 @@ package frc.robot.manipulator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.PhysicalConstants.ManipulatorConstants;
+import frc.robot.constants.VirtualConstants.PivotPositionNames;
 import frc.robot.constants.VirtualConstants.SubsystemStates;
+import frc.robot.pivot.PivotSubsystem;
+import frc.robot.utilities.Elastic;
+import frc.robot.utilities.Elastic.Notification;
+import frc.robot.utilities.Elastic.NotificationLevel;
 
 /** A command that outtakes the coral */
 public class OuttakeCoralCommand extends Command {
@@ -14,9 +19,15 @@ public class OuttakeCoralCommand extends Command {
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setCoralMotor(-ManipulatorConstants.CORAL_OUTTAKE_SPEED);
-
-        ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.OUTTAKING);
+        if(
+            PivotSubsystem.getInstance().getPositionName().equals(PivotPositionNames.CORAL)
+            || PivotSubsystem.getInstance().getPositionName().equals(PivotPositionNames.L4_CORAL)
+        ) {
+            ManipulatorSubsystem.getInstance().setCoralMotor(-ManipulatorConstants.CORAL_OUTTAKE_SPEED);
+            ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.OUTTAKING);
+        } else {
+            Elastic.sendNotification(new Notification(NotificationLevel.ERROR, "Manipulator", "Coral can't outtake at this position"));
+        }
     }
 
     @Override
@@ -26,7 +37,6 @@ public class OuttakeCoralCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         ManipulatorSubsystem.getInstance().setCoralMotor(0);
-
         ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.IDLE);
     }
 

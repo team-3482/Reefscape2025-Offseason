@@ -2,6 +2,10 @@ package frc.robot.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.VirtualConstants.ElevatorPositions;
+import frc.robot.constants.VirtualConstants.PivotPositionNames;
+import frc.robot.constants.VirtualConstants.PivotPositions;
+import frc.robot.pivot.MovePivotCommand;
+import frc.robot.pivot.PivotSubsystem;
 
 import java.util.function.Supplier;
 
@@ -40,20 +44,42 @@ public class MoveElevatorCommand extends Command {
         this(position, () -> slow, returnToIdle); // Still creates a supplier that supplies just the boolean
     }
 
-    @Override
-    public void initialize() {
-        ElevatorSubsystem.getInstance().motionMagicPosition(
-            Double.isNaN(this.position) ? ElevatorSubsystem.getInstance().getPosition()
-                : this.position, true, this.slowSupplier.get()
-        );
+    private void pivotSafety() {
+        double currentPos = PivotSubsystem.getInstance().getPosition();
+        double goalPos = position; // reassign for clarity
+
+        if(
+            (currentPos < ElevatorPositions.SAFE_PIVOT_HEIGHT && goalPos > ElevatorPositions.SAFE_PIVOT_HEIGHT) // up
+                || (currentPos > ElevatorPositions.SAFE_PIVOT_HEIGHT && goalPos < ElevatorPositions.SAFE_PIVOT_HEIGHT) // down
+        ) {
+            new MovePivotCommand(PivotPositions.ELEVATING, PivotPositionNames.ELEVATING);
+        }
     }
 
     @Override
-    public void execute() {}
+    public void initialize() {
+        if(!PivotSubsystem.getInstance().isSafeToElevate()) {
+            pivotSafety();
+        }
+    }
+
+    @Override
+    public void execute() {
+        if(PivotSubsystem.getInstance().isSafeToElevate()){
+            ElevatorSubsystem.getInstance().motionMagicPosition(
+                Double.isNaN(this.position) ? ElevatorSubsystem.getInstance().getPosition()
+                    : this.position, true, this.slowSupplier.get()
+            );
+        }
+    }
 
     @Override
     public void end(boolean interrupted) {
         if (this.returnToIdle) {
+            if(!PivotSubsystem.getInstance().isSafeToElevate()) {
+                pivotSafety();
+            }
+
             ElevatorSubsystem.getInstance().motionMagicPosition(
                 ElevatorPositions.IDLE_HEIGHT, true, this.slowSupplier.get()
             );

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.PivotConstants;
 import frc.robot.constants.PhysicalConstants.PivotConstants.Slot0Gains;
+import frc.robot.constants.VirtualConstants.PivotPositionNames;
 import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.constants.PhysicalConstants.RobotConstants.CAN_BUS;
@@ -40,6 +41,8 @@ public class PivotSubsystem extends SubsystemBase {
 
     private double lastPosition = Double.NaN;
 
+    private PivotPositionNames positionName;
+
     private PivotSubsystem() {
         super("PivotSubsystem");
 
@@ -49,6 +52,7 @@ public class PivotSubsystem extends SubsystemBase {
         this.motor.getPosition().setUpdateFrequency(50);
         this.motor.getVelocity().setUpdateFrequency(50);
 
+        this.positionName = PivotPositionNames.INTAKE;
     }
 
     @Override
@@ -59,6 +63,8 @@ public class PivotSubsystem extends SubsystemBase {
             SmartDashboard.putNumber("Pivot/Position", position);
             Logger.recordOutput("Pivot/Position", position);
             this.lastPosition = position;
+
+            Logger.recordOutput("Pivot/PositionName", positionName);
         }
 
         boolean inputToggled = SmartDashboard.getBoolean("Pivot/ToggleInputSlider", false);
@@ -207,5 +213,22 @@ public class PivotSubsystem extends SubsystemBase {
      */
     public double getRotorVelocity() {
         return Units.rotationsToDegrees(this.motor.getVelocity().getValueAsDouble());
+    }
+
+    /**
+     * Finds if moving the elevator is safe and won't crash from pivot in the way
+     * @return The boolean where true is safe
+     */
+    public boolean isSafeToElevate() {
+        double position = getPosition();
+        return (position >= PivotConstants.MINIMUM_SAFE && position <= PivotConstants.MAXIMUM_SAFE);
+    }
+
+    public void setPositionName(PivotPositionNames name) {
+        positionName = name;
+    }
+
+    public PivotPositionNames getPositionName() {
+        return positionName;
     }
 }

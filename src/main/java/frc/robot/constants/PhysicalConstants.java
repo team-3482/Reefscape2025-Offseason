@@ -83,6 +83,11 @@ public final class PhysicalConstants {
             public static final double kD = 0;
         }
 
+        /** Minimum safe position to prevent the pivot from crashing when elevator moves */
+        public static final double MINIMUM_SAFE = 45;
+        /** Maximum safe position to prevent the pivot from crashing when elevator moves */
+        public static final double MAXIMUM_SAFE = 135;
+
     }
 
     /** Constants for the manipulator subsystem */

@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 import frc.robot.constants.VirtualConstants.ElevatorPositions;
+import frc.robot.constants.VirtualConstants.PivotPositionNames;
+import frc.robot.constants.VirtualConstants.PivotPositions;
+import frc.robot.pivot.MovePivotCommand;
+import frc.robot.pivot.PivotSubsystem;
 
 /** A command that pushes the elevator down to the hardstop to zero it */
 public class ZeroElevatorCommand extends Command {
@@ -14,15 +18,17 @@ public class ZeroElevatorCommand extends Command {
         addRequirements(ElevatorSubsystem.getInstance());
     }
 
-
     @Override
     public void initialize() {
-        ElevatorSubsystem.getInstance().setVoltage(-ElevatorConstants.ZERO_ELEVATOR_VOLTAGE);
+        new MovePivotCommand(PivotPositions.ELEVATING, PivotPositionNames.ELEVATING);
     }
 
-
     @Override
-    public void execute() {}
+    public void execute() {
+        if(PivotSubsystem.getInstance().isSafeToElevate()) {
+            ElevatorSubsystem.getInstance().setVoltage(-ElevatorConstants.ZERO_ELEVATOR_VOLTAGE);
+        }
+    }
 
 
     @Override
