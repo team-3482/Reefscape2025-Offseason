@@ -27,6 +27,13 @@ public final class VirtualConstants {
         public static final String DEV = "Dev";
     }
 
+    public static enum SubsystemStates {
+        IDLE,
+        INTAKING,
+        OUTTAKING,
+        HOLDING
+    }
+
     /** Constants for elevator heights */
     public static final class ElevatorPositions {
         // TODO update these values with the new elevator
