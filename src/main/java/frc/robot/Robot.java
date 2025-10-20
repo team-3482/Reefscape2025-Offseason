@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -12,8 +13,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.VirtualConstants;
-import frc.robot.utilities.Elastic;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -28,7 +27,7 @@ public class Robot extends LoggedRobot {
         RobotContainer robotContainer = RobotContainer.getInstance();
 
         robotContainer.configureDriverBindings();
-        // robotContainer.configureOperatorBindings(); // TODO operator controller
+        robotContainer.configureOperatorBindings();
 
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
@@ -37,12 +36,12 @@ public class Robot extends LoggedRobot {
 
         if (isReal()) {
             // Random parent directory name to differentiate logs.
-            // I tried to use the date & time, but the RIO doesn't have accurate date & time.
-            String path = "/U/logs/" + (long)(Math.random() * Math.pow(10, 16)); 
+            // I tried to use the date & time, but the RIO doesn't have an accurate timestamp since there's no RTC.
+            String path = "/U/logs/" + (long)(Math.random() * Math.pow(10, 16));
 
             System.out.println("logging to: " + path + " (new directory: " + new File(path).mkdirs() + ")");
 
-            // SignalLogger.setPath(path); // TODO uncomment after phoenix6 library is added
+            SignalLogger.setPath(path);
 
             Logger.addDataReceiver(new WPILOGWriter(path)); // Log to a USB stick ("/U/logs")
             Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
@@ -90,7 +89,7 @@ public class Robot extends LoggedRobot {
             System.err.println("No auton command found.");
         }
 
-        Elastic.selectTab(VirtualConstants.DashboardTabNames.AUTON);
+        // Elastic.selectTab(VirtualConstants.DashboardTabNames.AUTON); // this lags the bot after enabling so it's commented out
     }
 
     @Override
@@ -102,7 +101,7 @@ public class Robot extends LoggedRobot {
             this.auton.cancel();
         }
 
-        Elastic.selectTab(VirtualConstants.DashboardTabNames.TELEOP);
+        // Elastic.selectTab(VirtualConstants.DashboardTabNames.TELEOP);
     }
 
     @Override
