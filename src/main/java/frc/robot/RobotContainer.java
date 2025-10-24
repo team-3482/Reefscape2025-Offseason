@@ -19,6 +19,8 @@ import frc.robot.constants.VirtualConstants.ControllerConstants;
 import frc.robot.led.LEDSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.swerve.SwerveTelemetry;
+import frc.robot.vision.LimelightSubsystem;
+import frc.robot.vision.QuestNavSubsystem;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -64,6 +66,8 @@ public class RobotContainer {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
         LEDSubsystem.getInstance();
+        LimelightSubsystem.getInstance();
+        QuestNavSubsystem.getInstance();
     }
 
     /**
