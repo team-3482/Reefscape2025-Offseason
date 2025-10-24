@@ -31,7 +31,7 @@ public class Robot extends LoggedRobot {
         RobotContainer robotContainer = RobotContainer.getInstance();
 
         robotContainer.configureDriverBindings();
-        // robotContainer.configureOperatorBindings(); // TODO operator controller
+        robotContainer.configureOperatorBindings();
 
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
@@ -41,7 +41,7 @@ public class Robot extends LoggedRobot {
         if (isReal()) {
             // Random parent directory name to differentiate logs.
             // I tried to use the date & time, but the RIO doesn't have an accurate timestamp since there's no RTC.
-            String path = "/U/logs/" + (long)(Math.random() * Math.pow(10, 16)); 
+            String path = "/U/logs/" + (long)(Math.random() * Math.pow(10, 16));
 
             System.out.println("logging to: " + path + " (new directory: " + new File(path).mkdirs() + ")");
 
@@ -111,7 +111,7 @@ public class Robot extends LoggedRobot {
             LEDSubsystem.getInstance().setColor(StatusColors.ERROR);
         }
 
-        Elastic.selectTab(VirtualConstants.DashboardTabNames.AUTON);
+        // Elastic.selectTab(VirtualConstants.DashboardTabNames.AUTON); // this lags the bot after enabling so it's commented out
     }
 
     @Override
@@ -124,7 +124,7 @@ public class Robot extends LoggedRobot {
             LEDSubsystem.getInstance().setColor(StatusColors.OK);
         }
 
-        Elastic.selectTab(VirtualConstants.DashboardTabNames.TELEOP);
+        // Elastic.selectTab(VirtualConstants.DashboardTabNames.TELEOP);
     }
 
     @Override

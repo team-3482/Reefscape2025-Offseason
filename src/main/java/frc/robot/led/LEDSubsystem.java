@@ -166,4 +166,15 @@ public class LEDSubsystem extends SubsystemBase {
     public StatusColors getBlinkColor() {
         return this.blinkColor;
     }
+
+    /** Sets the LEDs to either Ok or Error based on the boolean parameter
+     * @param fail True if error
+     */
+    public void setOkOrError(boolean fail){
+        if(fail) {
+            LEDSubsystem.getInstance().blinkColor(StatusColors.ERROR);
+        } else {
+            LEDSubsystem.getInstance().setColor(StatusColors.OK);
+        }
+    }
 }
