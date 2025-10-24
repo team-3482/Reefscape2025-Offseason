@@ -3,6 +3,8 @@ package frc.robot.manipulator;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.PhysicalConstants.ManipulatorConstants;
 import frc.robot.constants.VirtualConstants.SubsystemStates;
+import frc.robot.led.LEDSubsystem;
+import frc.robot.led.StatusColors;
 
 /** A command that intakes the coral */
 public class IntakeCoralCommand extends Command {
@@ -32,6 +34,10 @@ public class IntakeCoralCommand extends Command {
 
         ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.IDLE);
         ManipulatorSubsystem.getInstance().setState("Funnel", SubsystemStates.IDLE);
+
+        if(!interrupted) {
+            LEDSubsystem.getInstance().setColor(StatusColors.CORAL);
+        }
     }
 
 

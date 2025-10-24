@@ -3,6 +3,7 @@ package frc.robot.elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 import frc.robot.constants.VirtualConstants.ElevatorPositions;
+import frc.robot.led.LEDSubsystem;
 import frc.robot.pivot.PivotSubsystem;
 
 /** A command that pushes the elevator down to the hardstop to zero it */
@@ -31,7 +32,9 @@ public class ZeroElevatorCommand extends Command {
         if (!interrupted) {
             ElevatorSubsystem.getInstance().setPosition(ElevatorPositions.IDLE_HEIGHT);
         }
-        // LEDSubsystem.getInstance().setColor(interrupted ? StatusColors.ERROR : StatusColors.OK);
+
+        LEDSubsystem.getInstance().setOkOrError(interrupted);
+
     }
 
     @Override
