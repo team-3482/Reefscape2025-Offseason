@@ -14,16 +14,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.VirtualConstants.ControllerConstants;
-import frc.robot.constants.VirtualConstants.PivotPositionNames;
-import frc.robot.manipulator.*;
 import frc.robot.constants.VirtualConstants.ElevatorPositions;
+import frc.robot.constants.VirtualConstants.PivotPositionNames;
 import frc.robot.constants.VirtualConstants.PivotPositions;
 import frc.robot.elevator.ElevatorSubsystem;
 import frc.robot.elevator.MoveElevatorCommand;
 import frc.robot.elevator.ZeroElevatorCommand;
+import frc.robot.manipulator.*;
 import frc.robot.pivot.MovePivotCommand;
+import frc.robot.pivot.PivotSafetyCommand;
 import frc.robot.pivot.PivotSubsystem;
 import frc.robot.pivot.ZeroPivotCommand;
 import frc.robot.swerve.SwerveSubsystem;
@@ -102,7 +104,7 @@ public class RobotContainer {
         // Drivetrain will execute this command periodically
         Drivetrain.setDefaultCommand(
             Drivetrain.applyRequest(() -> {
-                boolean elevatorTooHigh = ElevatorSubsystem.getInstance().getPosition() > ElevatorPositions.SLOW_DRIVE_HEIGHT;
+                boolean elevatorTooHigh = ElevatorSubsystem.getInstance().getPosition() > ElevatorConstants.SLOW_DRIVE_HEIGHT;
                 boolean topSpeed = leftTrigger.get();
                 boolean fineControl = rightTrigger.get();
 
@@ -192,22 +194,36 @@ public class RobotContainer {
         // B -> Cancel all commands
         this.operatorController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
 
-        // D-PAD: Left -> L1, Down -> L2, Right -> L3, Up -> L4
+        // D-PAD: Left -> Zero, Down -> L2, Right -> L3, Up -> L4
         Supplier<Boolean> slowElevatorSupplier = () -> this.operatorController.getHID().getRightTriggerAxis() >= 0.5;
 
-        // TODO make these go to the right pivot position
-        this.operatorController.povLeft()
-            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L1_CORAL, slowElevatorSupplier, true));
-        this.operatorController.povDown()
-            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L2_CORAL, slowElevatorSupplier, true));
-        this.operatorController.povRight()
-            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L3_CORAL, slowElevatorSupplier, true));
-        this.operatorController.povUp()
-            .toggleOnTrue(new MoveElevatorCommand(ElevatorPositions.L4_CORAL, slowElevatorSupplier, true));
+        this.operatorController.povLeft().onTrue(Commands.sequence(
+            new PivotSafetyCommand(),
+            new ZeroElevatorCommand()
+        ));
+
+        this.operatorController.povDown().onTrue(Commands.sequence(
+            new PivotSafetyCommand(ElevatorPositions.L2_CORAL),
+            new MoveElevatorCommand(ElevatorPositions.L2_CORAL, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.CORAL, PivotPositionNames.CORAL)
+        ));
+
+        this.operatorController.povRight().onTrue(Commands.sequence(
+            new PivotSafetyCommand(ElevatorPositions.L3_CORAL),
+            new MoveElevatorCommand(ElevatorPositions.L3_CORAL, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.CORAL, PivotPositionNames.CORAL)
+        ));
+
+        this.operatorController.povUp().onTrue(Commands.sequence(
+            new PivotSafetyCommand(ElevatorPositions.L4_CORAL),
+            new MoveElevatorCommand(ElevatorPositions.L4_CORAL, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.L4_CORAL, PivotPositionNames.L4_CORAL)
+        ));
 
         // Left Bumper -> Intake Coral
         this.operatorController.leftBumper().onTrue(Commands.sequence(
-            new MoveElevatorCommand(ElevatorPositions.INTAKING_HEIGHT, slowElevatorSupplier, true),
+            new PivotSafetyCommand(ElevatorPositions.INTAKE),
+            new MoveElevatorCommand(ElevatorPositions.INTAKE, slowElevatorSupplier),
             new MovePivotCommand(PivotPositions.INTAKE, PivotPositionNames.INTAKE)
         )).toggleOnTrue(new IntakeCoralCommand());
 
@@ -217,27 +233,32 @@ public class RobotContainer {
 
         // A -> Intake L2 Algae, Y -> Intake L3 Algae
         this.operatorController.a().onTrue(Commands.sequence(
-            new MoveElevatorCommand(ElevatorPositions.L2_ALGAE, slowElevatorSupplier, false),
+            new PivotSafetyCommand(),
+            new MoveElevatorCommand(ElevatorPositions.L2_ALGAE, slowElevatorSupplier),
             new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE)
         )).toggleOnTrue(new IntakeAlgaeCommand());
 
         this.operatorController.y().onTrue(Commands.sequence(
-            new MoveElevatorCommand(ElevatorPositions.L3_ALGAE, slowElevatorSupplier, false),
+            new PivotSafetyCommand(),
+            new MoveElevatorCommand(ElevatorPositions.L3_ALGAE, slowElevatorSupplier),
             new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE)
         )).toggleOnTrue(new IntakeAlgaeCommand());
 
         // X -> Outtake Algae
-        this.operatorController.x()
-            .whileTrue(Commands.sequence(
-                new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE),
-                new OuttakeAlgaeCommand()
-            ));
+        this.operatorController.x().whileTrue(Commands.sequence(
+            new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE),
+            new OuttakeAlgaeCommand()
+        ));
 
 
         // Double Rectangle -> Zero Elevator
-        this.operatorController.back().onTrue(new ZeroElevatorCommand());
+        // this.operatorController.back().onTrue(Commands.sequence(
+        //     new PivotSafetyCommand(),
+        //     new ZeroElevatorCommand()
+        // ));
+
         // Burger -> Zero Pivot
-        this.operatorController.start().onTrue(new ZeroPivotCommand());
+        this.operatorController.start().whileTrue(new ZeroPivotCommand());
     }
 
     /**

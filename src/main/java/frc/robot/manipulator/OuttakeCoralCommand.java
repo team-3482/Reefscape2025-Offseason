@@ -5,9 +5,6 @@ import frc.robot.constants.PhysicalConstants.ManipulatorConstants;
 import frc.robot.constants.VirtualConstants.PivotPositionNames;
 import frc.robot.constants.VirtualConstants.SubsystemStates;
 import frc.robot.pivot.PivotSubsystem;
-import frc.robot.utilities.Elastic;
-import frc.robot.utilities.Elastic.Notification;
-import frc.robot.utilities.Elastic.NotificationLevel;
 
 /** A command that outtakes the coral */
 public class OuttakeCoralCommand extends Command {
@@ -25,8 +22,6 @@ public class OuttakeCoralCommand extends Command {
         ) {
             ManipulatorSubsystem.getInstance().setCoralMotor(-ManipulatorConstants.CORAL_OUTTAKE_SPEED);
             ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.OUTTAKING);
-        } else {
-            Elastic.sendNotification(new Notification(NotificationLevel.ERROR, "Manipulator", "Coral can't outtake at this position"));
         }
     }
 

@@ -6,7 +6,6 @@ package frc.robot.manipulator;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.ManipulatorConstants;
@@ -34,9 +33,9 @@ public class ManipulatorSubsystem extends SubsystemBase {
     private ManipulatorSubsystem() {
         super("ManipulatorSubsystem");
 
-        ManipulatorSubsystem.getInstance().setState("Algae", SubsystemStates.IDLE);
-        ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.IDLE);
-        ManipulatorSubsystem.getInstance().setState("Funnel", SubsystemStates.IDLE);
+        setState("Algae", SubsystemStates.IDLE);
+        setState("Coral", SubsystemStates.IDLE);
+        setState("Funnel", SubsystemStates.IDLE);
 
         CurrentLimitsConfigs limitConfigs = new CurrentLimitsConfigs();
         limitConfigs.StatorCurrentLimitEnable = true;

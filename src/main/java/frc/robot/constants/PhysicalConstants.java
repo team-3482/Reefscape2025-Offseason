@@ -36,6 +36,16 @@ public final class PhysicalConstants {
         /** Elevator Motor Stator Current Limit */
         public static final double STATOR_CURRENT_LIMIT = 80;
 
+        /** The maximum height that the elevator can go to without the pivot being in the way */
+        public static final double SAFE_PIVOT_HEIGHT = 0.35;
+
+        /** The maximum height the elevator can raise to before it slows the drivetrain to prevent tipping over */
+        public static final double SLOW_DRIVE_HEIGHT = 0.4;
+
+        /** The maximum height of the elevator */
+        public static final double MAX_HEIGHT = 0.78;
+
+        // TODO tune MM
         /* Motion Magic Config */
         public static final double ROTOR_TO_MECHANISM_RATIO = 3; // 36:12, 3:1
         public static final double CRUISE_SPEED = 30;
@@ -49,7 +59,7 @@ public final class PhysicalConstants {
             public static final double kS = 0;
             public static final double kV = 0;
             public static final double kA = 0;
-            public static final double kP = 2;
+            public static final double kP = 16;
             public static final double kI = 0;
             public static final double kD = 0;
         }
@@ -60,15 +70,16 @@ public final class PhysicalConstants {
         public static final int MOTOR_ID = 22;
 
         /** Lower angle limit */
-        public static final double LOWER_ANGLE_LIMIT = -10;
+        public static final double LOWER_ANGLE_LIMIT = 0;
         /** Upper angle limit */
-        public static final double UPPER_ANGLE_LIMIT = 270;
+        public static final double UPPER_ANGLE_LIMIT = 173;
 
         /** Tolerance for Commands using MotionMagic in degrees. */
-        public static final double POSITION_TOLERANCE = 0.1;
+        public static final double POSITION_TOLERANCE = 2;
 
+        // TODO tune MM
         /* Motion Magic Config */
-        public static final double ROTOR_TO_MECHANISM_RATIO = 61; // 61:1
+        public static final double ROTOR_TO_MECHANISM_RATIO = (double) 203280 / 3240;
         public static final double CRUISE_SPEED = 2;
         public static final double ACCELERATION = 4;
 
@@ -78,15 +89,18 @@ public final class PhysicalConstants {
             public static final double kS = 0;
             public static final double kV = 0;
             public static final double kA = 0;
-            public static final double kP = 1;
+            public static final double kP = 32;
             public static final double kI = 0;
             public static final double kD = 0;
         }
 
         /** Minimum safe position to prevent the pivot from crashing when elevator moves */
-        public static final double MINIMUM_SAFE = 45;
+        public static final double MINIMUM_SAFE = 40;
         /** Maximum safe position to prevent the pivot from crashing when elevator moves */
-        public static final double MAXIMUM_SAFE = 135;
+        public static final double MAXIMUM_SAFE = 140;
+
+        /** The speed that the pivot zeros at */
+        public static final double ZERO_SPEED = 0.1;
 
     }
 
@@ -101,21 +115,21 @@ public final class PhysicalConstants {
         public static final int FUNNEL_MOTOR_ID = 25;
 
         /** The speed at which the Manipulator Coral motor will intake at */
-        public static final double CORAL_INTAKE_SPEED = 0.1;
+        public static final double CORAL_INTAKE_SPEED = 0.3;
         /** The speed at which the Manipulator Coral motor will outtake at */
-        public static final double CORAL_OUTTAKE_SPEED = 0.1;
+        public static final double CORAL_OUTTAKE_SPEED = 0.3;
         /** The speed at which the Manipulator Algae motor will intake at */
-        public static final double ALGAE_INTAKE_SPEED = 0.1;
+        public static final double ALGAE_INTAKE_SPEED = 0.3;
         /** The speed at which the Manipulator Algae motor will outtake at */
-        public static final double ALGAE_OUTTAKE_SPEED = 0.1;
+        public static final double ALGAE_OUTTAKE_SPEED = 0.4;
         /** The speed at which the Manipulator Algae motor will hold the Algae in place with */
         public static final double ALGAE_HOLD_SPEED = 0.05;
         /** The speed at which the Funnel (Coral) motor will intake at */
         public static final double FUNNEL_INTAKE_SPEED = 0.1;
 
         /** The current limit for the Manipulator Coral motor */
-        public static final double CORAL_CURRENT_LIMIT = 20;
+        public static final double CORAL_CURRENT_LIMIT = 200;
         /** The current limit for the Manipulator Algae motor */
-        public static final double ALGAE_CURRENT_LIMIT = 20;
+        public static final double ALGAE_CURRENT_LIMIT = 30;
     }
 }

@@ -134,9 +134,6 @@ public class PivotSubsystem extends SubsystemBase {
             .withPosition(Units.degreesToRotations(position));
 
         this.motor.setControl(control);
-
-        System.out.println(motor.getControlMode());
-        System.out.println(Units.degreesToRotations(position));
     }
     /**
      * Goes to a position using Motion Magic slot 0.

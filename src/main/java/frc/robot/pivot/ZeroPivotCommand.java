@@ -1,6 +1,7 @@
 package frc.robot.pivot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.PhysicalConstants.PivotConstants;
 
 /** A command that pushes the pivot down to the hardstop to zero it */
 public class ZeroPivotCommand extends Command {
@@ -15,8 +16,7 @@ public class ZeroPivotCommand extends Command {
 
     @Override
     public void initialize() {
-        // PivotSubsystem.getInstance().setPivotSpeed(PivotConstants.ZERO_PIVOT_VOLTAGE / 12, false);
-        PivotSubsystem.getInstance().setPivotSpeed(0);
+        PivotSubsystem.getInstance().setPivotSpeed(-PivotConstants.ZERO_SPEED, false);
         System.out.println("Zeroing Pivot!");
     }
 
@@ -27,16 +27,13 @@ public class ZeroPivotCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        if (!interrupted) {
-            PivotSubsystem.getInstance().setPositionHardstop();
-        }
+        PivotSubsystem.getInstance().setPivotSpeed(0);
+        PivotSubsystem.getInstance().setPositionHardstop();
         // LEDSubsystem.getInstance().setColor(interrupted ? StatusColors.ERROR : StatusColors.OK);
     }
 
     @Override
     public boolean isFinished() {
-        return PivotSubsystem.getInstance().getRotorVelocity() == 0;
-
-        // TODO check for rotor velocity == 0 after a small period of time so it can fall
+        return false;
     }
 }

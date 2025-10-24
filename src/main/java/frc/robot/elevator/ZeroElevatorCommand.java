@@ -1,12 +1,8 @@
 package frc.robot.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 import frc.robot.constants.VirtualConstants.ElevatorPositions;
-import frc.robot.constants.VirtualConstants.PivotPositionNames;
-import frc.robot.constants.VirtualConstants.PivotPositions;
-import frc.robot.pivot.MovePivotCommand;
 import frc.robot.pivot.PivotSubsystem;
 
 /** A command that pushes the elevator down to the hardstop to zero it */
@@ -19,9 +15,7 @@ public class ZeroElevatorCommand extends Command {
     }
 
     @Override
-    public void initialize() {
-        new MovePivotCommand(PivotPositions.ELEVATING, PivotPositionNames.ELEVATING);
-    }
+    public void initialize() {}
 
     @Override
     public void execute() {
@@ -42,7 +36,8 @@ public class ZeroElevatorCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return ElevatorSubsystem.getInstance().getRotorVelocity() == 0
+        return
+            ElevatorSubsystem.getInstance().getRotorVelocity() == 0
             && ElevatorSubsystem.getInstance().getStatorCurrent() >= ElevatorConstants.STATOR_CURRENT_LIMIT;
     }
 }

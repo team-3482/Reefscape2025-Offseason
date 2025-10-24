@@ -240,16 +240,14 @@ public class ElevatorSubsystem extends SubsystemBase {
      */
     public void motionMagicPosition(double position, boolean clamp, boolean slow) {
         if (clamp) {
-            position = MathUtil.clamp(position, ElevatorPositions.INTAKING_HEIGHT, ElevatorPositions.MAX_HEIGHT);
+            position = MathUtil.clamp(position, ElevatorPositions.INTAKE, ElevatorConstants.MAX_HEIGHT);
         }
 
         this.lastSetGoal = position;
 
         MotionMagicVoltage control = motionMagicVoltage
-            // .withSlot(0)
+            .withSlot(0)
             .withPosition(this.metersToRotation(position));
-            // .withLimitForwardMotion(atUpperLimit())
-            // .withLimitReverseMotion(atLowerLimit());
 
         if (slow) {
             this.leftMotor.setControl(control);
@@ -270,8 +268,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         VoltageOut control = this.voltageOut
             .withOutput(voltage);
-            // .withLimitForwardMotion(atUpperLimit())
-            // .withLimitReverseMotion(atLowerLimit());
 
         this.rightMotor.setControl(control);
     }
