@@ -28,8 +28,11 @@ import frc.robot.pivot.MovePivotCommand;
 import frc.robot.pivot.PivotSafetyCommand;
 import frc.robot.pivot.PivotSubsystem;
 import frc.robot.pivot.ZeroPivotCommand;
+import frc.robot.led.LEDSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.swerve.SwerveTelemetry;
+import frc.robot.vision.LimelightSubsystem;
+import frc.robot.vision.QuestNavSubsystem;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.Map;
@@ -73,6 +76,9 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs on startup. */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
+        LEDSubsystem.getInstance();
+        LimelightSubsystem.getInstance();
+        QuestNavSubsystem.getInstance();
         ElevatorSubsystem.getInstance();
         PivotSubsystem.getInstance();
         ManipulatorSubsystem.getInstance();
