@@ -17,7 +17,6 @@ public class ZeroPivotCommand extends Command {
     @Override
     public void initialize() {
         PivotSubsystem.getInstance().setPivotSpeed(-PivotConstants.ZERO_SPEED, false);
-        System.out.println("Zeroing Pivot!");
     }
 
 
@@ -30,6 +29,7 @@ public class ZeroPivotCommand extends Command {
         PivotSubsystem.getInstance().setPivotSpeed(0);
         PivotSubsystem.getInstance().setPositionHardstop();
         // LEDSubsystem.getInstance().setColor(interrupted ? StatusColors.ERROR : StatusColors.OK);
+        System.out.println("Pivot Zeroed!");
     }
 
     @Override

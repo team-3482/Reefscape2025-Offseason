@@ -46,14 +46,10 @@ public class PivotSafetyCommand extends Command {
             )
         ) {
             end = true;
-            System.out.println("Pivot Safety not necessary");
         } else {
             PivotSubsystem.getInstance().motionMagicPosition(PivotPositions.ELEVATING);
             PivotSubsystem.getInstance().setPositionName(PivotPositionNames.ELEVATING);
         }
-
-        System.out.println("1: " + (currentPos < ElevatorConstants.SAFE_PIVOT_HEIGHT && goalPos < ElevatorConstants.SAFE_PIVOT_HEIGHT));
-        System.out.println("2: " + (currentPos > ElevatorConstants.SAFE_PIVOT_HEIGHT && goalPos > ElevatorConstants.SAFE_PIVOT_HEIGHT));
     }
 
     @Override

@@ -77,19 +77,19 @@ public final class PhysicalConstants {
         /** Tolerance for Commands using MotionMagic in degrees. */
         public static final double POSITION_TOLERANCE = 2;
 
-        // TODO tune MM
+        // this could be better but it's good enough and I dont have time anymore
         /* Motion Magic Config */
         public static final double ROTOR_TO_MECHANISM_RATIO = (double) 203280 / 3240;
-        public static final double CRUISE_SPEED = 2;
-        public static final double ACCELERATION = 4;
+        public static final double CRUISE_SPEED = 3;
+        public static final double ACCELERATION = 7.5;
 
         /** Gains used for Motion Magic slot 0. */
         public static final class Slot0Gains {
-            public static final double kG = 0;
-            public static final double kS = 0;
+            public static final double kG = 0.15;
+            public static final double kS = 0.23;
             public static final double kV = 0;
             public static final double kA = 0;
-            public static final double kP = 32;
+            public static final double kP = 192;
             public static final double kI = 0;
             public static final double kD = 0;
         }
@@ -100,7 +100,7 @@ public final class PhysicalConstants {
         public static final double MAXIMUM_SAFE = 140;
 
         /** The speed that the pivot zeros at */
-        public static final double ZERO_SPEED = 0.1;
+        public static final double ZERO_SPEED = 0.2;
 
     }
 
