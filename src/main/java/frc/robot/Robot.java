@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,12 +40,12 @@ public class Robot extends LoggedRobot {
 
         if (isReal()) {
             // Random parent directory name to differentiate logs.
-            // I tried to use the date & time, but the RIO doesn't have accurate date & time.
+            // I tried to use the date & time, but the RIO doesn't have an accurate timestamp since there's no RTC.
             String path = "/U/logs/" + (long)(Math.random() * Math.pow(10, 16)); 
 
             System.out.println("logging to: " + path + " (new directory: " + new File(path).mkdirs() + ")");
 
-            // SignalLogger.setPath(path); // TODO uncomment after phoenix6 library is added
+            SignalLogger.setPath(path);
 
             Logger.addDataReceiver(new WPILOGWriter(path)); // Log to a USB stick ("/U/logs")
             Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
