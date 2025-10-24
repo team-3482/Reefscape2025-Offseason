@@ -98,8 +98,8 @@ public final class VisionConstants {
          */
         public static final Transform2d ROBOT_TO_QUEST = new Transform2d(
             new Translation2d(
-                Inches.of(13), // TODO measure this again from the center of the bot to the lenses, not the cameras
-                Inches.of(0) // Centered
+                Inches.of(-0.5),
+                Inches.of(11.5)
             ),
             new Rotation2d() // Facing forward
         );
