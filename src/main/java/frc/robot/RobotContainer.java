@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,20 +14,26 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.VirtualConstants.ControllerConstants;
-import frc.robot.constants.VirtualConstants.ScoringConstants;
+import frc.robot.constants.VirtualConstants.ElevatorPositions;
+import frc.robot.constants.VirtualConstants.PivotPositionNames;
+import frc.robot.constants.VirtualConstants.PivotPositions;
 import frc.robot.elevator.ElevatorSubsystem;
 import frc.robot.elevator.MoveElevatorCommand;
 import frc.robot.elevator.ZeroElevatorCommand;
+import frc.robot.manipulator.*;
+import frc.robot.pivot.MovePivotCommand;
+import frc.robot.pivot.PivotSafetyCommand;
+import frc.robot.pivot.PivotSubsystem;
+import frc.robot.pivot.ZeroPivotCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.swerve.SwerveTelemetry;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static frc.robot.constants.PhysicalConstants.RobotConstants.CAN_BUS;
 
 public class RobotContainer {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
@@ -69,12 +73,9 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs on startup. */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
-        // TODO get rid of this after tuning elevator
-        // ElevatorSubsystem.getInstance();
-        TalonFX left = new TalonFX(20, CAN_BUS);
-        TalonFX right = new TalonFX(21, CAN_BUS);
-
-        left.setControl(new Follower(20, true));
+        ElevatorSubsystem.getInstance();
+        PivotSubsystem.getInstance();
+        ManipulatorSubsystem.getInstance();
     }
 
     /**
@@ -103,7 +104,7 @@ public class RobotContainer {
         // Drivetrain will execute this command periodically
         Drivetrain.setDefaultCommand(
             Drivetrain.applyRequest(() -> {
-                boolean elevatorTooHigh = ElevatorSubsystem.getInstance().getPosition() > ScoringConstants.SLOW_DRIVE_HEIGHT;
+                boolean elevatorTooHigh = ElevatorSubsystem.getInstance().getPosition() > ElevatorConstants.SLOW_DRIVE_HEIGHT;
                 boolean topSpeed = leftTrigger.get();
                 boolean fineControl = rightTrigger.get();
 
@@ -190,28 +191,74 @@ public class RobotContainer {
 
     /** Configures the button bindings of the operator controller. */
     public void configureOperatorBindings() {
+        // B -> Cancel all commands
         this.operatorController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
 
-        // D-PAD: Left -> L1, Down -> L2, Right -> L3, Up -> L4
+        // D-PAD: Left -> Zero, Down -> L2, Right -> L3, Up -> L4
         Supplier<Boolean> slowElevatorSupplier = () -> this.operatorController.getHID().getRightTriggerAxis() >= 0.5;
 
-        this.operatorController.povLeft()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L1_CORAL, slowElevatorSupplier, true));
-        this.operatorController.povDown()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L2_CORAL, slowElevatorSupplier, true));
-        this.operatorController.povRight()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L3_CORAL, slowElevatorSupplier, true));
-        this.operatorController.povUp()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L4_CORAL, slowElevatorSupplier, true));
+        this.operatorController.povLeft().onTrue(Commands.sequence(
+            new PivotSafetyCommand(),
+            new ZeroElevatorCommand()
+        ));
 
-        // A -> L2 Algae, Y -> L3 Algae
-        this.operatorController.y()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L2_ALGAE, slowElevatorSupplier, true));
-        this.operatorController.a()
-            .toggleOnTrue(new MoveElevatorCommand(ScoringConstants.L3_ALGAE, slowElevatorSupplier, true));
+        this.operatorController.povDown().onTrue(Commands.sequence(
+            new PivotSafetyCommand(ElevatorPositions.L2_CORAL),
+            new MoveElevatorCommand(ElevatorPositions.L2_CORAL, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.CORAL, PivotPositionNames.CORAL)
+        ));
+
+        this.operatorController.povRight().onTrue(Commands.sequence(
+            new PivotSafetyCommand(ElevatorPositions.L3_CORAL),
+            new MoveElevatorCommand(ElevatorPositions.L3_CORAL, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.CORAL, PivotPositionNames.CORAL)
+        ));
+
+        this.operatorController.povUp().onTrue(Commands.sequence(
+            new PivotSafetyCommand(ElevatorPositions.L4_CORAL),
+            new MoveElevatorCommand(ElevatorPositions.L4_CORAL, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.L4_CORAL, PivotPositionNames.L4_CORAL)
+        ));
+
+        // Left Bumper -> Intake Coral
+        this.operatorController.leftBumper().onTrue(Commands.sequence(
+            new PivotSafetyCommand(ElevatorPositions.INTAKE),
+            new MoveElevatorCommand(ElevatorPositions.INTAKE, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.INTAKE, PivotPositionNames.INTAKE)
+        )).toggleOnTrue(new IntakeCoralCommand());
+
+        //Right Bumper -> Outtake Coral
+        this.operatorController.rightBumper()
+            .whileTrue(new OuttakeCoralCommand());
+
+        // A -> Intake L2 Algae, Y -> Intake L3 Algae
+        this.operatorController.a().onTrue(Commands.sequence(
+            new PivotSafetyCommand(),
+            new MoveElevatorCommand(ElevatorPositions.L2_ALGAE, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE)
+        )).toggleOnTrue(new IntakeAlgaeCommand());
+
+        this.operatorController.y().onTrue(Commands.sequence(
+            new PivotSafetyCommand(),
+            new MoveElevatorCommand(ElevatorPositions.L3_ALGAE, slowElevatorSupplier),
+            new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE)
+        )).toggleOnTrue(new IntakeAlgaeCommand());
+
+        // X -> Outtake Algae
+        this.operatorController.x().whileTrue(Commands.sequence(
+            new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE),
+            new OuttakeAlgaeCommand()
+        ));
+
 
         // Double Rectangle -> Zero Elevator
-        this.operatorController.back().onTrue(new ZeroElevatorCommand());
+        // this.operatorController.back().onTrue(Commands.sequence(
+        //     new PivotSafetyCommand(),
+        //     new ZeroElevatorCommand()
+        // ));
+
+        // Burger -> Zero Pivot
+        this.operatorController.start().whileTrue(new ZeroPivotCommand());
     }
 
     /**

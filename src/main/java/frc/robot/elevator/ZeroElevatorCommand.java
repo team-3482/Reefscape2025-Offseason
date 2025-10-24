@@ -1,14 +1,12 @@
 package frc.robot.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
-import frc.robot.constants.VirtualConstants.ScoringConstants;
+import frc.robot.constants.VirtualConstants.ElevatorPositions;
+import frc.robot.pivot.PivotSubsystem;
 
 /** A command that pushes the elevator down to the hardstop to zero it */
 public class ZeroElevatorCommand extends Command {
-    double lastRotorVelocity;
-
     /** Creates a new ZeroElevatorCommand. */
     public ZeroElevatorCommand() {
         setName("ZeroElevatorCommand");
@@ -16,29 +14,30 @@ public class ZeroElevatorCommand extends Command {
         addRequirements(ElevatorSubsystem.getInstance());
     }
 
+    @Override
+    public void initialize() {}
 
     @Override
-    public void initialize() {
-        ElevatorSubsystem.getInstance().setVoltage(-ElevatorConstants.zeroElevatorVoltage);
+    public void execute() {
+        if(PivotSubsystem.getInstance().isSafeToElevate()) {
+            ElevatorSubsystem.getInstance().setVoltage(-ElevatorConstants.ZERO_ELEVATOR_VOLTAGE);
+        }
     }
-
-
-    @Override
-    public void execute() {}
 
 
     @Override
     public void end(boolean interrupted) {
         ElevatorSubsystem.getInstance().setVoltage(0);
         if (!interrupted) {
-            ElevatorSubsystem.getInstance().setPosition(ScoringConstants.IDLE_HEIGHT);
+            ElevatorSubsystem.getInstance().setPosition(ElevatorPositions.IDLE_HEIGHT);
         }
         // LEDSubsystem.getInstance().setColor(interrupted ? StatusColors.ERROR : StatusColors.OK);
     }
 
     @Override
     public boolean isFinished() {
-        return ElevatorSubsystem.getInstance().getRotorVelocity() == 0
-            && ElevatorSubsystem.getInstance().getStatorCurrent() >= ElevatorConstants.statorCurrentLimit;
+        return
+            ElevatorSubsystem.getInstance().getRotorVelocity() == 0
+            && ElevatorSubsystem.getInstance().getStatorCurrent() >= ElevatorConstants.STATOR_CURRENT_LIMIT;
     }
 }

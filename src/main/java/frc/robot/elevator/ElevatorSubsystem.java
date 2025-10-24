@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
-import frc.robot.constants.PhysicalConstants.ElevatorConstants.ElevatorSlot0Gains;
+import frc.robot.constants.PhysicalConstants.ElevatorConstants.Slot0Gains;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
-import frc.robot.constants.VirtualConstants.ScoringConstants;
+import frc.robot.constants.VirtualConstants.ElevatorPositions;
 import org.littletonrobotics.junction.Logger;
 
 /** Subsystem to control Elevator motion */
@@ -174,13 +174,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Set Motion Magic gains in slot 0.
         Slot0Configs slot0Configs = configuration.Slot0;
         slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
-        slot0Configs.kG = ElevatorSlot0Gains.kG;
-        slot0Configs.kS = ElevatorSlot0Gains.kS;
-        slot0Configs.kV = ElevatorSlot0Gains.kV;
-        slot0Configs.kA = ElevatorSlot0Gains.kA;
-        slot0Configs.kP = ElevatorSlot0Gains.kP;
-        slot0Configs.kI = ElevatorSlot0Gains.kI;
-        slot0Configs.kD = ElevatorSlot0Gains.kD;
+        slot0Configs.kG = Slot0Gains.kG;
+        slot0Configs.kS = Slot0Gains.kS;
+        slot0Configs.kV = Slot0Gains.kV;
+        slot0Configs.kA = Slot0Gains.kA;
+        slot0Configs.kP = Slot0Gains.kP;
+        slot0Configs.kI = Slot0Gains.kI;
+        slot0Configs.kD = Slot0Gains.kD;
 
         // Set acceleration and cruise velocity.
         MotionMagicConfigs motionMagicConfigs = configuration.MotionMagic;
@@ -189,7 +189,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         CurrentLimitsConfigs currentLimitsConfigs = configuration.CurrentLimits;
         currentLimitsConfigs.StatorCurrentLimitEnable = true;
-        currentLimitsConfigs.StatorCurrentLimit = ElevatorConstants.statorCurrentLimit;
+        currentLimitsConfigs.StatorCurrentLimit = ElevatorConstants.STATOR_CURRENT_LIMIT;
         currentLimitsConfigs.SupplyCurrentLimitEnable = true;
         currentLimitsConfigs.SupplyCurrentLimit = 15;
         currentLimitsConfigs.SupplyCurrentLowerTime = 0.5;
@@ -207,7 +207,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     /**
      * Sets the position of the elevator in meters.
-     * @param position - The position in meters.
+     * @param position The position in meters.
      */
     public void setPosition(double position) {
         double convertedPosition = metersToRotation(position);
@@ -234,22 +234,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     /**
      * Moves the elevator to a position in meters using Motion Magic.
-     * @param position - The position in meters.
-     * @param clamp - Whether to clamp the position to the soft stops.
-     * @param slow - Whether or not to limit the elevator's max speed and acceleration.
+     * @param position The position in meters.
+     * @param clamp Whether to clamp the position to the soft stops.
+     * @param slow Whether to limit the elevator's max speed and acceleration.
      */
     public void motionMagicPosition(double position, boolean clamp, boolean slow) {
         if (clamp) {
-            position = MathUtil.clamp(position, ScoringConstants.INTAKING_HEIGHT, ScoringConstants.MAX_HEIGHT);
+            position = MathUtil.clamp(position, ElevatorPositions.INTAKE, ElevatorConstants.MAX_HEIGHT);
         }
 
         this.lastSetGoal = position;
 
         MotionMagicVoltage control = motionMagicVoltage
-            // .withSlot(0)
+            .withSlot(0)
             .withPosition(this.metersToRotation(position));
-            // .withLimitForwardMotion(atUpperLimit())
-            // .withLimitReverseMotion(atLowerLimit());
 
         if (slow) {
             this.leftMotor.setControl(control);
@@ -263,22 +261,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     /**
      * Sends a voltage to the motor
-     * @param voltage - Voltage in between 12 and -12
+     * @param voltage Voltage in between 12 and -12
      */
     public void setVoltage(double voltage) {
         voltage = MathUtil.clamp(voltage, -12, 12);
 
         VoltageOut control = this.voltageOut
             .withOutput(voltage);
-            // .withLimitForwardMotion(atUpperLimit())
-            // .withLimitReverseMotion(atLowerLimit());
 
         this.rightMotor.setControl(control);
     }
 
     /**
      * Checks if the current elevator position is within a tolerance of a position.
-     * @param position - The position to check against.
+     * @param position The position to check against.
      * @return Whether the current position is within the tolerance.
      */
     public boolean withinTolerance(double position) {
@@ -293,13 +289,17 @@ public class ElevatorSubsystem extends SubsystemBase {
         return this.lastSetGoal;
     }
 
+    /**
+     * Gets the current stator current
+     * @return The current in amps
+     */
     public double getStatorCurrent() {
         return rightMotor.getStatorCurrent().getValueAsDouble();
     }
 
     /**
      * Converts motor rotations to elevator meters.
-     * @param rotations - The rotations to convert.
+     * @param rotations The rotations to convert.
      * @return The meters.
      * @apiNote This method is private and not used by other classes.
      */
@@ -309,8 +309,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     /**
      * Converts elevator meters to motor rotations.
-     * @param meters - The meters to convert.
-     * @return The rotations.s
+     * @param meters The meters to convert.
+     * @return The rotations
      * @apiNote This method is private and not used by other classes.
      */
     private double metersToRotation(double meters) {

@@ -27,22 +27,40 @@ public final class VirtualConstants {
         public static final String DEV = "Dev";
     }
 
-    /** Constants for elevator heights */
-    public static final class ScoringConstants {
-        // TODO update these values with the new elevator
-        /* Heights in elevator meters for scoring at these heights. */
-        public static final double L2_ALGAE = 0.05;
-        public static final double L3_ALGAE = 0.32;
+    public static enum SubsystemStates {
+        IDLE,
+        INTAKING,
+        OUTTAKING,
+        HOLDING
+    }
 
-        public static final double L1_CORAL = 0.157;
+    public static enum PivotPositionNames {
+        INTAKE,
+        CORAL,
+        L4_CORAL,
+        ALGAE,
+        ELEVATING
+    }
+
+    /** Constants for elevator heights */
+    public static final class ElevatorPositions {
+        // TODO update these values with the new elevator
+        public static final double INTAKE = -0.02; // this offset makes sure it actually goes to zero, something is off here
         public static final double L2_CORAL = 0.23;
         public static final double L3_CORAL = 0.49;
-        public static final double L4_CORAL = 0.78; // placeholder
+        public static final double L4_CORAL = 0.78;
 
-        public static final double MAX_HEIGHT = 0.78;
+        public static final double L2_ALGAE = 0.14;
+        public static final double L3_ALGAE = 0.41;
 
-        public static final double SLOW_DRIVE_HEIGHT = 0.4;
-        public static final double INTAKING_HEIGHT = -0.02; // this offset makes sure it actually goes to zero, something is off here
-        public static final double IDLE_HEIGHT = INTAKING_HEIGHT;
+        public static final double IDLE_HEIGHT = INTAKE;
+    }
+
+    public static final class PivotPositions {
+        public static final double CORAL = 170;
+        public static final double L4_CORAL = 145;
+        public static final double ALGAE = 90;
+        public static final double INTAKE = 0;
+        public static final double ELEVATING = ALGAE;
     }
 }
