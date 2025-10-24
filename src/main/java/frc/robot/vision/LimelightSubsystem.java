@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.AprilTagMap;
 import frc.robot.constants.VisionConstants.LimelightConstants;
 import frc.robot.constants.VisionConstants.TagSets;
+import frc.robot.led.LEDSubsystem;
+import frc.robot.led.StatusColors;
 import frc.robot.swerve.SwerveSubsystem;
 import org.littletonrobotics.junction.Logger;
 
@@ -118,7 +120,7 @@ public class LimelightSubsystem extends SubsystemBase {
         Logger.recordOutput("Vision/ReefInView", reef);
 
         if (reef && DriverStation.isEnabled()) {
-            //LEDSubsystem.getInstance().setColor(StatusColors.CAN_ALIGN); //TODO led
+            LEDSubsystem.getInstance().setColor(StatusColors.CAN_ALIGN);
         }
     }
 

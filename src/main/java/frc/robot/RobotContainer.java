@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.VirtualConstants.ControllerConstants;
+import frc.robot.led.LEDSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.swerve.SwerveTelemetry;
+import frc.robot.vision.LimelightSubsystem;
 import frc.robot.vision.QuestNavSubsystem;
 
 import java.util.Map;
@@ -63,7 +65,8 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs on startup. */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initializeSubsystems() {
-        // LimelightSubsystem.getInstance();
+        LEDSubsystem.getInstance();
+        LimelightSubsystem.getInstance();
         QuestNavSubsystem.getInstance();
     }
 
