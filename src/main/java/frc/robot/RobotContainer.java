@@ -6,9 +6,11 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -20,12 +22,12 @@ import frc.robot.constants.VirtualConstants.*;
 import frc.robot.elevator.ElevatorSubsystem;
 import frc.robot.elevator.MoveElevatorCommand;
 import frc.robot.elevator.ZeroElevatorCommand;
+import frc.robot.led.LEDSubsystem;
 import frc.robot.manipulator.*;
 import frc.robot.pivot.MovePivotCommand;
 import frc.robot.pivot.PivotSafetyCommand;
 import frc.robot.pivot.PivotSubsystem;
 import frc.robot.pivot.ZeroPivotCommand;
-import frc.robot.led.LEDSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.swerve.SwerveTelemetry;
 import frc.robot.vision.LimelightSubsystem;
@@ -45,7 +47,7 @@ public class RobotContainer {
         return RobotContainerHolder.INSTANCE;
     }
 
-    // private final SendableChooser<Command> autoChooser; // TODO PathPlanner
+    private final SendableChooser<Command> autoChooser;
     private Command auton = null;
 
     // Instance of the controllers used to drive the robot
@@ -62,11 +64,10 @@ public class RobotContainer {
         configureDrivetrain();
         initializeSubsystems();
 
-        /* TODO PathPlanner
         this.autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
         this.autoChooser.onChange((Command autoCommand) -> this.auton = autoCommand); // Reloads the stored auto
 
-        SmartDashboard.putData("Auto Chooser", this.autoChooser); */
+        SmartDashboard.putData("Auto Chooser", this.autoChooser);
         SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
     }
 
@@ -277,7 +278,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         if (this.auton == null) {
-            this.auton = Commands.none(); //this.autoChooser.getSelected(); // TODO PathPlanner
+            this.auton = this.autoChooser.getSelected();
         }
         return this.auton;
     }
