@@ -221,7 +221,7 @@ public class RobotContainer {
         this.operatorController.povUp().onTrue(Commands.sequence(
             new PivotSafetyCommand(ElevatorPositions.L4_CORAL),
             new MoveElevatorCommand(ElevatorPositions.L4_CORAL, slowElevatorSupplier),
-            new MovePivotCommand(PivotPositions.L4_CORAL, PivotPositionNames.L4_CORAL)
+            new MovePivotCommand(PivotPositions.CORAL, PivotPositionNames.CORAL)
         ));
 
         // Left Bumper -> Intake Coral
