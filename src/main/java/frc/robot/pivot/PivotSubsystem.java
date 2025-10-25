@@ -42,6 +42,7 @@ public class PivotSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
     private double lastPosition = Double.NaN;
+    private boolean lastAtEndstop = true;
 
     private PivotPositionNames positionName;
 
@@ -60,6 +61,13 @@ public class PivotSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         double position = getPosition();
+        boolean atEndstop = isAtEndstop();
+
+        if (atEndstop != this.lastAtEndstop) {
+            SmartDashboard.putBoolean("Pivot/AtEndstop", atEndstop);
+            Logger.recordOutput("Pivot/AtEndstop", atEndstop);
+            this.lastAtEndstop = atEndstop;
+        }
 
         if (position != this.lastPosition) {
             SmartDashboard.putNumber("Pivot/Position", position);
