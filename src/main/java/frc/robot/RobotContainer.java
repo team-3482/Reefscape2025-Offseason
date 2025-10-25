@@ -16,10 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 import frc.robot.constants.SwerveConstants;
-import frc.robot.constants.VirtualConstants.ControllerConstants;
-import frc.robot.constants.VirtualConstants.ElevatorPositions;
-import frc.robot.constants.VirtualConstants.PivotPositionNames;
-import frc.robot.constants.VirtualConstants.PivotPositions;
+import frc.robot.constants.VirtualConstants.*;
 import frc.robot.elevator.ElevatorSubsystem;
 import frc.robot.elevator.MoveElevatorCommand;
 import frc.robot.elevator.ZeroElevatorCommand;
@@ -227,11 +224,16 @@ public class RobotContainer {
         ));
 
         // Left Bumper -> Intake Coral
-        this.operatorController.leftBumper().onTrue(Commands.sequence(
-            new PivotSafetyCommand(ElevatorPositions.INTAKE),
-            new MoveElevatorCommand(ElevatorPositions.INTAKE, slowElevatorSupplier),
-            new MovePivotCommand(PivotPositions.INTAKE, PivotPositionNames.INTAKE)
-        )).toggleOnTrue(new IntakeCoralCommand());
+        if(ManipulatorSubsystem.getInstance().getCoralState().equals(SubsystemStates.IDLE)){
+            this.operatorController.leftBumper().onTrue(Commands.sequence(
+                new PivotSafetyCommand(ElevatorPositions.INTAKE),
+                new MoveElevatorCommand(ElevatorPositions.INTAKE, slowElevatorSupplier),
+                new MovePivotCommand(PivotPositions.INTAKE, PivotPositionNames.INTAKE),
+                new IntakeCoralCommand(),
+                new MoveElevatorCommand(ElevatorPositions.POST_INTAKE, slowElevatorSupplier),
+                new MovePivotCommand(PivotPositions.ELEVATING, PivotPositionNames.ELEVATING)
+            ));
+        }
 
         //Right Bumper -> Outtake Coral
         this.operatorController.rightBumper()
@@ -241,14 +243,16 @@ public class RobotContainer {
         this.operatorController.a().onTrue(Commands.sequence(
             new PivotSafetyCommand(),
             new MoveElevatorCommand(ElevatorPositions.L2_ALGAE, slowElevatorSupplier),
-            new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE)
-        )).toggleOnTrue(new IntakeAlgaeCommand());
+            new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE),
+            new IntakeAlgaeCommand()
+        ));
 
         this.operatorController.y().onTrue(Commands.sequence(
             new PivotSafetyCommand(),
             new MoveElevatorCommand(ElevatorPositions.L3_ALGAE, slowElevatorSupplier),
-            new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE)
-        )).toggleOnTrue(new IntakeAlgaeCommand());
+            new MovePivotCommand(PivotPositions.ALGAE, PivotPositionNames.ALGAE),
+            new IntakeAlgaeCommand()
+        ));
 
         // X -> Outtake Algae
         this.operatorController.x().whileTrue(Commands.sequence(

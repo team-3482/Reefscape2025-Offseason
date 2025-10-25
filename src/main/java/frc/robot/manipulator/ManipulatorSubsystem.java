@@ -14,7 +14,7 @@ import org.littletonrobotics.junction.Logger;
 
 import static frc.robot.constants.PhysicalConstants.RobotConstants.CAN_BUS;
 
-/** An example subsystem that does nothing. */
+/** Subsystem to manage the manipulator and intake funnel. */
 public class ManipulatorSubsystem extends SubsystemBase {
     // Use Bill Pugh Singleton Pattern for efficient lazy initialization (thread-safe !)
     private static class ManipulatorSubsystemHolder {
@@ -29,6 +29,8 @@ public class ManipulatorSubsystem extends SubsystemBase {
     private TalonFX coralMotor = new TalonFX(ManipulatorConstants.CORAL_MOTOR_ID, CAN_BUS);
     private TalonFX algaeMotor = new TalonFX(ManipulatorConstants.ALGAE_MOTOR_ID, CAN_BUS);
     private TalonFX funnelMotor = new TalonFX(ManipulatorConstants.FUNNEL_MOTOR_ID, CAN_BUS);
+
+    private SubsystemStates coralState;
 
     private ManipulatorSubsystem() {
         super("ManipulatorSubsystem");
@@ -80,6 +82,14 @@ public class ManipulatorSubsystem extends SubsystemBase {
     public void setState(String subname, SubsystemStates state) {
         Logger.recordOutput("Manipulator/"+subname+"State", state);
         SmartDashboard.putString("Manipulator/"+subname+"State", state.toString());
+
+        if(subname.equals("Coral")) {
+            coralState = state;
+        }
+    }
+
+    public SubsystemStates getCoralState() {
+        return coralState;
     }
 
     /**

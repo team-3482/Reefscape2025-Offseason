@@ -13,10 +13,10 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.VirtualConstants;
+import frc.robot.constants.VirtualConstants.SubsystemStates;
 import frc.robot.led.LEDSubsystem;
 import frc.robot.led.StatusColors;
-import frc.robot.utilities.Elastic;
+import frc.robot.manipulator.ManipulatorSubsystem;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -99,15 +99,10 @@ public class Robot extends LoggedRobot {
         Logger.recordOutput("Auton/AutonCommand", auton.getName());
 
         if (this.auton != null) {
+            ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.HOLDING);
             this.auton.schedule();
         } else {
             System.err.println("No auton command found.");
-            Elastic.sendNotification(new Elastic.Notification(
-                    Elastic.NotificationLevel.ERROR,
-                    "Auton Error",
-                    "No auton command found."
-            ));
-
             LEDSubsystem.getInstance().setColor(StatusColors.ERROR);
         }
 

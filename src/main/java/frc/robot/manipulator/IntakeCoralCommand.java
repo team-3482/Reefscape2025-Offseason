@@ -16,7 +16,7 @@ public class IntakeCoralCommand extends Command {
 
     @Override
     public void initialize() {
-        ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.CORAL_INTAKE_SPEED);
+        ManipulatorSubsystem.getInstance().setCoralMotor(-ManipulatorConstants.CORAL_INTAKE_SPEED);
         ManipulatorSubsystem.getInstance().setFunnelMotor(ManipulatorConstants.FUNNEL_INTAKE_SPEED);
 
         ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.INTAKING);
@@ -29,15 +29,15 @@ public class IntakeCoralCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        ManipulatorSubsystem.getInstance().setCoralMotor(0);
-        ManipulatorSubsystem.getInstance().setFunnelMotor(0);
-
-        ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.IDLE);
-        ManipulatorSubsystem.getInstance().setState("Funnel", SubsystemStates.IDLE);
-
         if(!interrupted) {
             LEDSubsystem.getInstance().setColor(StatusColors.CORAL);
         }
+
+        ManipulatorSubsystem.getInstance().setCoralMotor(0);
+        ManipulatorSubsystem.getInstance().setFunnelMotor(0);
+
+        ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.HOLDING);
+        ManipulatorSubsystem.getInstance().setState("Funnel", SubsystemStates.IDLE);
     }
 
 

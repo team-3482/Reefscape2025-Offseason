@@ -20,7 +20,7 @@ public class OuttakeCoralCommand extends Command {
             PivotSubsystem.getInstance().getPositionName().equals(PivotPositionNames.CORAL)
             || PivotSubsystem.getInstance().getPositionName().equals(PivotPositionNames.L4_CORAL)
         ) {
-            ManipulatorSubsystem.getInstance().setCoralMotor(-ManipulatorConstants.CORAL_OUTTAKE_SPEED);
+            ManipulatorSubsystem.getInstance().setCoralMotor(ManipulatorConstants.CORAL_OUTTAKE_SPEED);
             ManipulatorSubsystem.getInstance().setState("Coral", SubsystemStates.OUTTAKING);
         }
     }
