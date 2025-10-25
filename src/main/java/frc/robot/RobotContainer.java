@@ -268,7 +268,7 @@ public class RobotContainer {
         // ));
 
         // Burger -> Zero Pivot
-        this.operatorController.start().whileTrue(new ZeroPivotCommand());
+        this.operatorController.start().onTrue(new ZeroPivotCommand());
     }
 
     /**

@@ -83,6 +83,9 @@ public final class PhysicalConstants {
         /** The CAN ID for the Pivot TalonFX */
         public static final int MOTOR_ID = 22;
 
+        /** The DIO ID for the limit switch */
+        public static final int LIMIT_SWITCH_ID = 0;
+
         /** Lower angle limit */
         public static final double LOWER_ANGLE_LIMIT = 0;
         /** Upper angle limit */
@@ -114,7 +117,7 @@ public final class PhysicalConstants {
         public static final double MAXIMUM_SAFE = 140;
 
         /** The speed that the pivot zeros at */
-        public static final double ZERO_SPEED = 0.2;
+        public static final double ZERO_SPEED = 0.4;
 
     }
 
