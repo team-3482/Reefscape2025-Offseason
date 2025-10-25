@@ -132,9 +132,9 @@ public final class PhysicalConstants {
         public static final int FUNNEL_MOTOR_ID = 25;
 
         /** The speed at which the Manipulator Coral motor will intake at */
-        public static final double CORAL_INTAKE_SPEED = 0.3;
+        public static final double CORAL_INTAKE_SPEED = 0.15;
         /** The speed at which the Manipulator Coral motor will outtake at */
-        public static final double CORAL_OUTTAKE_SPEED = 0.3;
+        public static final double CORAL_OUTTAKE_SPEED = 0.8;
         /** The speed at which the Manipulator Algae motor will intake at */
         public static final double ALGAE_INTAKE_SPEED = 0.3;
         /** The speed at which the Manipulator Algae motor will outtake at */
@@ -145,7 +145,7 @@ public final class PhysicalConstants {
         public static final double FUNNEL_INTAKE_SPEED = 0.1;
 
         /** The current limit for the Manipulator Coral motor */
-        public static final double CORAL_CURRENT_LIMIT = 200;
+        public static final double CORAL_CURRENT_LIMIT = 100;
         /** The current limit for the Manipulator Algae motor */
         public static final double ALGAE_CURRENT_LIMIT = 30;
     }
